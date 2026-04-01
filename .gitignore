@@ -1,35 +1,78 @@
-# Python
-backend/venv/
-**/__pycache__/
-**/*.pyc
-**/*.pyo
-*.egg-info/
-.eggs/
-
-# Environment
-.env
-.env.*
-!.env.example
-
-# Frontend build
-frontend/node_modules/
-frontend/dist/
-frontend/dist-ssr/
-frontend/*.local
-
-# Editors
-.vscode/*
-!.vscode/extensions.json
-.idea/
+# general hidden files/directories
 .DS_Store
-*.suo
-*.sw?
+.idea
+
+# file patterns
+*~
+
+# Project Specific patterns
+man
+
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*,cover
+.hypothesis/
+.reports
+instance/
+.webassets-cache
+docs/_build/
+target/
+.python-version
+.env
+env/
+venv/
+backend/venv/
+.venv/
+ENV/
+.spyderproject
+.ropeproject
+/.project
+/.pydevproject
+/.settings
+.vscode
+pyrightconfig.json
+pyrefly.toml
+.pytest_cache/
 
 # Logs
 *.log
 npm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Test artifacts
-.pytest_cache/
-htmlcov/
-.coverage
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
