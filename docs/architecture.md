@@ -14,7 +14,11 @@ A web-based GUI for the beets music library manager, providing album/track brows
 
 ```
 /mnt/nfs/beau/beets/
+├── install.sh                           # Interactive setup script (run once after cloning)
+├── Makefile                             # make backend / make frontend / make dev
 ├── backend/
+│   ├── .env                             # Runtime config (created by install.sh, gitignored)
+│   ├── .env.example                     # Template showing all configurable keys
 │   ├── app/
 │   │   ├── __init__.py              # FastAPI app factory
 │   │   ├── config.py                # Settings (paths, CORS, beets config)
@@ -142,12 +146,17 @@ def get_library(request: Request) -> Library:
     return request.app.state.lib
 ```
 
-**Config** (`backend/app/config.py`): Pydantic `BaseSettings` class reading from environment or `.env`:
-- `BEETS_DB_PATH` = `/mnt/nfs/musiclibrary.db`
-- `BEETS_CONFIG_PATH` = path to beets config.yaml (needed for write operations and import)
-- `MUSIC_BASE_PATH` = `/mnt/nfs/` (for resolving file paths)
-- `CORS_ORIGINS` = `["http://localhost:3000"]`
-- `HOST` / `PORT` = `0.0.0.0` / `5000`
+**Config** (`backend/app/config.py`): Pydantic `BaseSettings` class reading from `backend/.env` (path resolved relative to `config.py` so the server can be started from any working directory):
+
+| Variable | Default | Description |
+|---|---|---|
+| `BEETS_DB_PATH` | `/mnt/nfs/musiclibrary.db` | Path to the beets SQLite library database |
+| `MUSIC_BASE_PATH` | `/mnt/nfs/ml` | Root dir for all audio files — used for playback path security check |
+| `IMPORT_BASE_PATH` | `/mnt/nfs` | Allowed root for browser-triggered imports |
+| `CORS_ORIGINS` | `["http://localhost:3000", "http://localhost:5173"]` | Allowed CORS origins |
+| `HOST` / `PORT` | `0.0.0.0` / `5000` | Uvicorn bind address and port |
+
+`backend/.env` is created by `install.sh` and is gitignored. `backend/.env.example` is committed as a reference template.
 
 ### 3.2 Beets Library Initialization
 
@@ -789,13 +798,15 @@ The plugin is a `BeetsPlugin` subclass. It does NOT use the standard `before_cho
 
 The approach:
 
-1. The plugin subclasses or monkey-patches `beets.ui.commands.PromptChoice` / the `choose_match` function that the importer calls when it needs user input
+1. `WebImportSession` subclasses `beets.importer.ImportSession` and overrides `choose_match()` and `choose_item()` — the points where beets hands off to user interaction.
 2. Specifically, beets' `importer.py` calls `choose_match(task)` during album import and `choose_item(task)` during singleton import. These are the interception points.
-3. The plugin replaces these functions with versions that:
+3. The overrides:
    a. Serialize the `task` object's candidates into JSON-safe dicts
    b. Send them to the browser via the bridge
    c. Block waiting for the user's response
    d. Return the appropriate beets action/selection
+
+**Important — `timid` mode must be forced `True`**: Beets has an internal shortcut in its `user_query` pipeline stage — when `timid=False` and the recommendation is "strong", it auto-applies the first candidate *before* calling `choose_match()`. For a well-tagged library this bypasses the browser UI for nearly every album. `import_service.py` always sets `beets.config["import"]["timid"] = True` to force all candidate decisions through the browser regardless of match confidence.
 
 **What the plugin sends for each candidate set** (the `ImportCandidateSet` message):
 

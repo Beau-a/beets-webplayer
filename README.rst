@@ -29,33 +29,52 @@ Stack
 Requirements
 ------------
 
-- `beets <https://beets.io>`_ must be installed and your library already set up.
+- `beets <https://beets.io>`_ must be installed and your music library already set up.
   This project does not manage or modify beets itself — it reads from the beets
   SQLite database and calls beets CLI commands for import and file operations.
 - Python 3.11+
-- Node.js 18+ (for frontend dev / build)
+- Node.js 18+
 
-Getting Started
----------------
+Installation
+------------
 
-1. Configure ``backend/app/config.py`` with your beets DB path and music base path.
-2. Start the backend::
+Clone the repo and run the install script::
 
-    cd backend
-    pip install -r requirements.txt
-    uvicorn app.main:app --host 0.0.0.0 --port 5000
+    git clone https://github.com/Beau-a/beets-webplayer.git
+    cd beets-webplayer
+    ./install.sh
 
-3. Start the frontend (dev)::
+The script will:
 
-    cd frontend
-    npm install
-    npm run dev
+- Check for required dependencies (python3, pip, node, npm, beet)
+- Ask for your beets library database path, music root directory, import base path, and backend port
+- Write a ``backend/.env`` configuration file
+- Create a Python virtualenv and install backend dependencies
+- Install frontend Node packages
 
-   Or build for production::
+Configuration
+-------------
 
-    npm run build
+All runtime configuration lives in ``backend/.env`` (created by the install script).
+A template is provided at ``backend/.env.example``::
 
-4. Open ``http://localhost:5173`` in your browser.
+    BEETS_DB_PATH=/path/to/musiclibrary.db
+    MUSIC_BASE_PATH=/path/to/music
+    IMPORT_BASE_PATH=/path/to/incoming
+    PORT=5000
+
+Running
+-------
+
+Start backend and frontend in separate terminals::
+
+    make backend      # FastAPI on http://localhost:5000
+    make frontend     # Vite dev server on http://localhost:3000
+
+Or build the frontend for production and serve everything through the backend::
+
+    cd frontend && npm run build
+    make backend      # serves SPA + API at http://localhost:5000
 
 Note
 ----
