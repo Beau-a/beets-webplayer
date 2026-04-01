@@ -156,7 +156,7 @@ watch(
 }
 
 .track-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: #f4f4f5;
   white-space: nowrap;
@@ -168,7 +168,7 @@ watch(
 .track-title.track-link:hover { color: #a78bfa; }
 
 .track-artist {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
   white-space: nowrap;
   overflow: hidden;
@@ -179,7 +179,7 @@ watch(
 .track-artist.track-link:hover { color: #a1a1aa; }
 
 .no-track {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #52525b;
 }
 

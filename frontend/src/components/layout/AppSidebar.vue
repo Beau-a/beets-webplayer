@@ -162,7 +162,7 @@ const isLibraryActive = computed(() => route.path === '/library' || route.path.s
 }
 
 .logo-text {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -207,7 +207,7 @@ const isLibraryActive = computed(() => route.path === '/library' || route.path.s
 }
 
 .nav-label {
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 500;
 }
 

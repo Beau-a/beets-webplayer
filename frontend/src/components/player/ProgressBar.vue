@@ -71,7 +71,7 @@ function onMouseDown(_e: MouseEvent) {
 }
 
 .time-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
   color: #71717a; /* zinc-500 */
   white-space: nowrap;

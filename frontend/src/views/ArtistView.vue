@@ -380,7 +380,7 @@ watch(artistName, () => {
   gap: 5px;
   color: #71717a;
   text-decoration: none;
-  font-size: 13px;
+  font-size: var(--text-base);
   transition: color 0.15s;
   flex-shrink: 0;
 }
@@ -398,7 +398,7 @@ watch(artistName, () => {
 }
 
 .artist-meta {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
   flex-shrink: 0;
 }
@@ -414,7 +414,7 @@ watch(artistName, () => {
   border-radius: 6px;
   padding: 6px 11px;
   color: #a1a1aa;
-  font-size: 12px;
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
   flex-shrink: 0;
@@ -445,7 +445,7 @@ watch(artistName, () => {
 .album-list-panel::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 2px; }
 
 .panel-loading {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   padding: 20px;
   text-align: center;
@@ -495,14 +495,14 @@ watch(artistName, () => {
   min-width: 0;
 }
 .album-row-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #d4d4d8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .album-row-active .album-row-title { color: #f4f4f5; }
-.album-row-year { font-size: 11px; color: #71717a; }
+.album-row-year { font-size: var(--text-xs); color: #71717a; }
 
 /* Right: album detail */
 .album-detail-panel {
@@ -533,7 +533,7 @@ watch(artistName, () => {
 .detail-empty {
   padding: 60px 28px;
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #52525b;
 }
 
@@ -550,7 +550,7 @@ watch(artistName, () => {
 .detail-header-info { flex: 1; min-width: 0; }
 
 .detail-title {
-  font-size: 20px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0 0 8px;
@@ -565,7 +565,7 @@ watch(artistName, () => {
 }
 
 .detail-meta-item {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
 }
 .detail-meta-item + .detail-meta-item::before {
@@ -576,7 +576,7 @@ watch(artistName, () => {
 .format-badge {
   padding: 2px 7px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 .badge-flac { background: rgba(74,222,128,0.15); color: #86efac; }
@@ -592,7 +592,7 @@ watch(artistName, () => {
 }
 .location-icon { width: 13px; height: 13px; color: #52525b; flex-shrink: 0; }
 .location-path {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-family: ui-monospace, Consolas, monospace;
   color: #52525b;
   white-space: nowrap;
@@ -616,7 +616,7 @@ watch(artistName, () => {
   border-radius: 6px;
   padding: 6px 10px;
   color: #a1a1aa;
-  font-size: 12px;
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
   white-space: nowrap;

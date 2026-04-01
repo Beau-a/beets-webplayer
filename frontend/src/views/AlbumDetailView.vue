@@ -357,7 +357,7 @@ onMounted(async () => {
   gap: 6px;
   color: #71717a;
   text-decoration: none;
-  font-size: 13px;
+  font-size: var(--text-base);
   margin-bottom: 24px;
   transition: color 0.15s;
   background: none;
@@ -428,7 +428,7 @@ onMounted(async () => {
 
 .album-type {
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -441,7 +441,7 @@ onMounted(async () => {
 }
 
 .album-title {
-  font-size: 28px;
+  font-size: var(--text-3xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0 0 8px;
@@ -449,7 +449,7 @@ onMounted(async () => {
 }
 
 .album-artist {
-  font-size: 16px;
+  font-size: var(--text-lg);
   color: #a1a1aa;
   margin-bottom: 18px;
 }
@@ -462,7 +462,7 @@ onMounted(async () => {
 }
 
 .meta-pill {
-  font-size: 12px;
+  font-size: var(--text-sm);
   padding: 4px 10px;
   background-color: #27272a;
   border-radius: 20px;
@@ -484,14 +484,14 @@ onMounted(async () => {
 .meta-stat { display: flex; flex-direction: column; gap: 2px; }
 
 .stat-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #52525b;
 }
 
-.stat-value { font-size: 14px; color: #d4d4d8; }
+.stat-value { font-size: var(--text-md); color: #d4d4d8; }
 
 /* Album actions */
 .album-actions {
@@ -508,7 +508,7 @@ onMounted(async () => {
   border-radius: 6px;
   padding: 6px 12px;
   color: #a1a1aa;
-  font-size: 13px;
+  font-size: var(--text-base);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
@@ -549,7 +549,7 @@ onMounted(async () => {
 }
 
 .location-path {
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-family: ui-monospace, Consolas, monospace;
   color: #52525b;
   white-space: nowrap;
@@ -569,7 +569,7 @@ onMounted(async () => {
 }
 
 .track-section-title {
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -601,14 +601,14 @@ onMounted(async () => {
 }
 
 .confirm-title {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: #f4f4f5;
   margin: 0 0 12px;
 }
 
 .confirm-body {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #a1a1aa;
   line-height: 1.6;
   margin: 0 0 20px;
@@ -622,7 +622,7 @@ onMounted(async () => {
   border-radius: 6px;
   padding: 8px 16px;
   color: #a1a1aa;
-  font-size: 14px;
+  font-size: var(--text-md);
   cursor: pointer;
 }
 .btn-cancel:hover { border-color: #71717a; color: #f4f4f5; }
@@ -633,7 +633,7 @@ onMounted(async () => {
   border-radius: 6px;
   padding: 8px 16px;
   color: white;
-  font-size: 14px;
+  font-size: var(--text-md);
   cursor: pointer;
 }
 .btn-delete:hover:not(:disabled) { background: #b91c1c; }
@@ -684,7 +684,7 @@ onMounted(async () => {
 
 /* Error */
 .error-state { text-align: center; padding: 80px 24px; }
-.error-text { font-size: 16px; color: #71717a; margin-bottom: 16px; }
+.error-text { font-size: var(--text-lg); color: #71717a; margin-bottom: 16px; }
 
 @media (max-width: 640px) {
   .album-hero { flex-direction: column; }

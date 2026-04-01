@@ -128,7 +128,7 @@ function formatTime(seconds: number): string {
 }
 
 .clear-btn {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
   background: transparent;
   border: none;
@@ -193,7 +193,7 @@ function formatTime(seconds: number): string {
 }
 
 .queue-index {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #52525b;
   min-width: 20px;
   text-align: right;
@@ -213,7 +213,7 @@ function formatTime(seconds: number): string {
 }
 
 .queue-track-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   color: #f4f4f5;
   white-space: nowrap;
@@ -226,7 +226,7 @@ function formatTime(seconds: number): string {
 }
 
 .queue-track-artist {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #71717a;
   white-space: nowrap;
   overflow: hidden;
@@ -234,7 +234,7 @@ function formatTime(seconds: number): string {
 }
 
 .queue-track-duration {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
@@ -275,13 +275,13 @@ function formatTime(seconds: number): string {
 }
 
 .queue-empty p {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #52525b;
   margin: 0 0 6px;
 }
 
 .queue-empty-hint {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #3f3f46 !important;
 }
 

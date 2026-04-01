@@ -174,7 +174,7 @@ function formatTime(seconds: number): string {
 }
 
 .clear-all-btn {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
   background: transparent;
   border: 1px solid #3f3f46;
@@ -194,7 +194,7 @@ function formatTime(seconds: number): string {
 }
 
 .section-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -206,7 +206,7 @@ function formatTime(seconds: number): string {
 }
 
 .section-count {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: #3f3f46;
   letter-spacing: 0;
@@ -273,12 +273,12 @@ function formatTime(seconds: number): string {
 }
 
 .current-artist {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
 }
 
 .current-album {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
 }
 
@@ -306,7 +306,7 @@ function formatTime(seconds: number): string {
 }
 
 .row-index {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   min-width: 24px;
   text-align: right;
@@ -322,7 +322,7 @@ function formatTime(seconds: number): string {
 }
 
 .row-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   color: #f4f4f5;
   white-space: nowrap;
@@ -331,7 +331,7 @@ function formatTime(seconds: number): string {
 }
 
 .row-artist {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
   white-space: nowrap;
   overflow: hidden;
@@ -339,7 +339,7 @@ function formatTime(seconds: number): string {
 }
 
 .row-album {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   min-width: 120px;
   max-width: 200px;
@@ -350,7 +350,7 @@ function formatTime(seconds: number): string {
 }
 
 .row-duration {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
   font-variant-numeric: tabular-nums;
   min-width: 36px;
@@ -393,13 +393,13 @@ function formatTime(seconds: number): string {
 }
 
 .queue-empty p {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #52525b;
   margin: 0 0 6px;
 }
 
 .queue-empty-hint {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #3f3f46 !important;
 }
 </style>

@@ -170,7 +170,7 @@ function formatClass(format: string): string {
 }
 
 .search-title {
-  font-size: 22px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0;
@@ -203,7 +203,7 @@ function formatClass(format: string): string {
 }
 
 .hint-subtext {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #52525b;
   margin: 0;
 }
@@ -213,7 +213,7 @@ function formatClass(format: string): string {
   border-radius: 4px;
   padding: 2px 6px;
   font-family: ui-monospace, Consolas, monospace;
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #a78bfa;
 }
 
@@ -223,7 +223,7 @@ function formatClass(format: string): string {
 }
 
 .result-section-title {
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -237,7 +237,7 @@ function formatClass(format: string): string {
 .result-count {
   background-color: #27272a;
   color: #a1a1aa;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 10px;
@@ -247,7 +247,7 @@ function formatClass(format: string): string {
 .tracks-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--text-base);
 }
 
 .tracks-table thead tr {
@@ -257,7 +257,7 @@ function formatClass(format: string): string {
 .tracks-table th {
   text-align: left;
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -297,7 +297,7 @@ function formatClass(format: string): string {
 .col-format { width: 80px; }
 
 .format-badge {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 2px 6px;
@@ -323,7 +323,7 @@ function formatClass(format: string): string {
 }
 
 .no-results-sub {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #52525b;
   margin: 0;
 }

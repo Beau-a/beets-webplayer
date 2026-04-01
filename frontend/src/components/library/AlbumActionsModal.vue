@@ -136,14 +136,14 @@ async function doRelocate() {
 }
 
 .modal-title {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: #f4f4f5;
   margin: 0 0 14px;
 }
 
 .modal-body {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #a1a1aa;
   line-height: 1.6;
   margin: 0 0 20px;
@@ -157,7 +157,7 @@ async function doRelocate() {
 }
 
 .field-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -170,7 +170,7 @@ async function doRelocate() {
   border-radius: 6px;
   padding: 7px 10px;
   color: #f4f4f5;
-  font-size: 14px;
+  font-size: var(--text-md);
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.15s;
@@ -179,13 +179,13 @@ async function doRelocate() {
 .field-input:focus { border-color: #7c3aed; }
 
 .field-hint {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   margin: 2px 0 0;
 }
 
 .modal-error {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #f87171;
   margin: 0 0 12px;
   padding: 8px 12px;
@@ -209,7 +209,7 @@ async function doRelocate() {
   border-radius: 6px;
   padding: 8px 16px;
   color: #a1a1aa;
-  font-size: 14px;
+  font-size: var(--text-md);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
@@ -222,7 +222,7 @@ async function doRelocate() {
   border-radius: 6px;
   padding: 8px 20px;
   color: white;
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
@@ -236,7 +236,7 @@ async function doRelocate() {
   border-radius: 6px;
   padding: 8px 20px;
   color: white;
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;

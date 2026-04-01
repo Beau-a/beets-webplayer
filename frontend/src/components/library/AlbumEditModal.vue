@@ -61,7 +61,7 @@
             <div class="field field-checkbox">
               <label class="checkbox-row">
                 <input v-model="form.comp" type="checkbox" class="check-input" />
-                <span class="field-label" style="text-transform: none; letter-spacing: 0; font-size: 13px;">Compilation</span>
+                <span class="field-label" style="text-transform: none; letter-spacing: 0; font-size: var(--text-base);">Compilation</span>
               </label>
             </div>
           </div>
@@ -220,7 +220,7 @@ async function handleSave() {
 }
 
 .modal-title {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: #f4f4f5;
   margin: 0;
@@ -276,7 +276,7 @@ async function handleSave() {
 }
 
 .field-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -289,7 +289,7 @@ async function handleSave() {
   border-radius: 6px;
   padding: 7px 10px;
   color: #f4f4f5;
-  font-size: 14px;
+  font-size: var(--text-md);
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.15s;
@@ -303,7 +303,7 @@ async function handleSave() {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #f87171;
 }
 
@@ -322,7 +322,7 @@ async function handleSave() {
   border-radius: 6px;
   padding: 8px 16px;
   color: #a1a1aa;
-  font-size: 14px;
+  font-size: var(--text-md);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
@@ -334,7 +334,7 @@ async function handleSave() {
   border-radius: 6px;
   padding: 8px 20px;
   color: white;
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;

@@ -138,7 +138,7 @@ function formatClass(fmt: string): string {
 /* Header */
 .list-header th {
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -207,24 +207,24 @@ function formatClass(fmt: string): string {
 
 /* Text */
 .album-name {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #f4f4f5;
   font-weight: 500;
 }
 
 .artist-name {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
 }
 
 .meta-text {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
   font-variant-numeric: tabular-nums;
 }
 
 .genre-text {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   white-space: nowrap;
   overflow: hidden;
@@ -235,7 +235,7 @@ function formatClass(fmt: string): string {
 
 /* Format badges */
 .format-badge {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 4px;
@@ -294,6 +294,6 @@ function formatClass(fmt: string): string {
 }
 
 .empty-icon { width: 56px; height: 56px; color: #3f3f46; }
-.empty-text { font-size: 16px; font-weight: 500; color: #71717a; margin: 0; }
-.empty-subtext { font-size: 13px; color: #52525b; margin: 0; }
+.empty-text { font-size: var(--text-lg); font-weight: 500; color: #71717a; margin: 0; }
+.empty-subtext { font-size: var(--text-base); color: #52525b; margin: 0; }
 </style>

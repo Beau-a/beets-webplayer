@@ -256,7 +256,7 @@ onUnmounted(() => {
 }
 
 .page-title {
-  font-size: 22px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0 0 32px;
@@ -267,7 +267,7 @@ onUnmounted(() => {
 }
 
 .section-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -276,7 +276,7 @@ onUnmounted(() => {
 }
 
 .section-desc {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   margin: -8px 0 20px;
   line-height: 1.6;
@@ -318,7 +318,7 @@ onUnmounted(() => {
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
 }
 
@@ -328,7 +328,7 @@ onUnmounted(() => {
 }
 
 .sub-title {
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -346,14 +346,14 @@ onUnmounted(() => {
 .formats tr:last-child { border-bottom: none; }
 
 .fmt-name {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   padding: 6px 0;
   width: 90px;
 }
 
 .fmt-count {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
   padding: 6px 16px 6px 0;
   text-align: right;
@@ -417,7 +417,7 @@ onUnmounted(() => {
   margin-bottom: 4px;
 }
 
-.task-desc { font-size: 13px; color: #71717a; line-height: 1.5; }
+.task-desc { font-size: var(--text-base); color: #71717a; line-height: 1.5; }
 
 .task-footer {
   display: flex;
@@ -426,7 +426,7 @@ onUnmounted(() => {
 }
 
 .status-badge {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -445,7 +445,7 @@ onUnmounted(() => {
   border-radius: 6px;
   padding: 7px 16px;
   color: white;
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
@@ -460,7 +460,7 @@ onUnmounted(() => {
 }
 
 .task-output {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #71717a;
   background: #18181b;
   border-radius: 6px;

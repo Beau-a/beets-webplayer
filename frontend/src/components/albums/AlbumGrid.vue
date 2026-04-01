@@ -139,14 +139,14 @@ const skeletonCount = 24
 }
 
 .empty-text {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 500;
   color: #71717a; /* zinc-500 */
   margin: 0;
 }
 
 .empty-subtext {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #52525b; /* zinc-600 */
   margin: 0;
 }

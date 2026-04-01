@@ -159,7 +159,7 @@ function doSingleton() {
 }
 
 .album-path {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   font-family: ui-monospace, Consolas, monospace;
   white-space: nowrap;
@@ -172,7 +172,7 @@ function doSingleton() {
 /* Recommendation badge */
 .rec-badge {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -216,7 +216,7 @@ function doSingleton() {
 }
 
 .no-candidates p {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   margin: 0;
   text-align: center;
@@ -272,7 +272,7 @@ function doSingleton() {
   height: 100%;
   min-height: 120px;
   color: #3f3f46;
-  font-size: 13px;
+  font-size: var(--text-base);
 }
 
 /* Action bar */
@@ -291,7 +291,7 @@ function doSingleton() {
 .action-btn {
   padding: 8px 16px;
   border-radius: 7px;
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   border: none;

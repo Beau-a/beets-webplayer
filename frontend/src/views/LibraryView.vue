@@ -322,7 +322,7 @@ function goToPage(n: number) {
 }
 
 .library-title {
-  font-size: 28px;
+  font-size: var(--text-3xl);
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #f4f4f5;
@@ -330,7 +330,7 @@ function goToPage(n: number) {
 }
 
 .library-count {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
   flex: 1;
 }
@@ -394,7 +394,7 @@ function goToPage(n: number) {
 }
 
 .artist-chip-label {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #c4b5fd;
 }
 
@@ -434,7 +434,7 @@ function goToPage(n: number) {
   border: 1px solid #3f3f46;
   border-radius: 7px;
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: #a1a1aa;
   cursor: pointer;
@@ -479,7 +479,7 @@ function goToPage(n: number) {
 .filter-count-badge {
   background: #7c3aed;
   color: white;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   border-radius: 10px;
   padding: 2px 8px;
@@ -501,7 +501,7 @@ function goToPage(n: number) {
 }
 
 .sort-label {
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -520,7 +520,7 @@ function goToPage(n: number) {
   border: 1px solid #3f3f46;
   border-radius: 7px;
   padding: 8px 32px 8px 12px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #d4d4d8;
   outline: none;
   cursor: pointer;
@@ -579,7 +579,7 @@ function goToPage(n: number) {
 }
 
 .pagination-info {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #71717a;
 }
 
@@ -587,7 +587,7 @@ function goToPage(n: number) {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -600,7 +600,7 @@ function goToPage(n: number) {
   border: 1px solid #3f3f46;
   border-radius: 6px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #d4d4d8;
   outline: none;
   cursor: pointer;
@@ -627,7 +627,7 @@ function goToPage(n: number) {
   border: none;
   border-radius: 7px;
   padding: 8px 14px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
@@ -649,7 +649,7 @@ function goToPage(n: number) {
 }
 
 .page-current {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a78bfa; /* violet-400 */
   font-weight: 600;
   min-width: 24px;

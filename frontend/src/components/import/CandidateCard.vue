@@ -161,21 +161,21 @@ const qualityLabel = computed(() => {
 .quality-poor.quality-dot { background-color: #f87171; }
 
 .quality-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .distance-score {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #52525b;
   margin-left: auto;
 }
 
 /* Title / artist */
 .candidate-title {
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 600;
   color: #f4f4f5;
   margin-bottom: 2px;
@@ -183,7 +183,7 @@ const qualityLabel = computed(() => {
 }
 
 .candidate-artist {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   margin-bottom: 10px;
 }
@@ -197,7 +197,7 @@ const qualityLabel = computed(() => {
 }
 
 .meta-chip {
-  font-size: 11px;
+  font-size: var(--text-xs);
   background-color: #27272a;
   color: #71717a;
   border-radius: 4px;
@@ -217,13 +217,13 @@ const qualityLabel = computed(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
 }
 
 .file-vs-mb {
   color: #52525b;
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 .track-icon {
@@ -232,7 +232,7 @@ const qualityLabel = computed(() => {
 }
 
 .warn-chip {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 500;
   border-radius: 4px;
   padding: 2px 7px;
@@ -250,7 +250,7 @@ const qualityLabel = computed(() => {
 
 /* MB link */
 .mb-link {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #7c3aed;
   text-decoration: none;
   display: inline-block;

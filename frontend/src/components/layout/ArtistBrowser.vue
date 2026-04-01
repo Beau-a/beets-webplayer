@@ -147,7 +147,7 @@ watch(() => props.visible, (val) => {
 }
 
 .ab-title {
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -192,7 +192,7 @@ watch(() => props.visible, (val) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   border-radius: 5px;
   border: none;
@@ -240,7 +240,7 @@ watch(() => props.visible, (val) => {
 
 .ab-loading,
 .ab-empty {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   padding: 16px 12px;
   text-align: center;
@@ -265,7 +265,7 @@ watch(() => props.visible, (val) => {
 }
 
 .ab-artist-name {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #d4d4d8;
   white-space: nowrap;
   overflow: hidden;
@@ -275,7 +275,7 @@ watch(() => props.visible, (val) => {
 }
 
 .ab-album-count {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #52525b;
   background: #27272a;
   border-radius: 4px;

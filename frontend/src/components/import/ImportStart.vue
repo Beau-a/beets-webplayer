@@ -36,14 +36,17 @@
             <span class="option-label">Write tags to files</span>
           </label>
           <label class="option-row">
-            <input v-model="opts.copy" type="checkbox" class="option-check" :disabled="isStarting" />
-            <span class="option-label">Copy files to library</span>
+            <input v-model="opts.move" type="checkbox" class="option-check" :disabled="isStarting" />
+            <span class="option-label">Move files into library</span>
           </label>
           <label class="option-row">
-            <input v-model="opts.move" type="checkbox" class="option-check" :disabled="isStarting" />
-            <span class="option-label">Move files (overrides copy)</span>
+            <input v-model="opts.copy" type="checkbox" class="option-check" :disabled="isStarting" />
+            <span class="option-label">Copy files (keep originals)</span>
           </label>
         </div>
+        <p class="options-hint" v-if="!opts.move && !opts.copy">
+          Neither move nor copy selected — files will be imported in-place and tracked at their current location.
+        </p>
 
         <div v-if="errorMessage" class="error-banner">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="error-icon">
@@ -84,7 +87,7 @@ const opts = reactive({
   autotag: true,
   write_tags: true,
   copy: false,
-  move: false,
+  move: true,
 })
 
 const isStarting = computed(() => importStore.sessionState === 'connecting')
@@ -137,14 +140,14 @@ async function handleStart() {
 }
 
 .start-title {
-  font-size: 22px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0 0 8px;
 }
 
 .start-description {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   line-height: 1.6;
   margin: 0 0 28px;
@@ -163,7 +166,7 @@ async function handleStart() {
 }
 
 .field-label {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   color: #a1a1aa;
 }
@@ -173,7 +176,7 @@ async function handleStart() {
   border: 1px solid #27272a;
   border-radius: 8px;
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #f4f4f5;
   font-family: ui-monospace, Consolas, monospace;
   transition: border-color 0.15s;
@@ -221,9 +224,20 @@ async function handleStart() {
 }
 
 .option-label {
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   user-select: none;
+}
+
+.options-hint {
+  font-size: var(--text-sm);
+  color: #a16207;
+  background: rgba(161, 98, 7, 0.1);
+  border: 1px solid rgba(161, 98, 7, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .error-banner {
@@ -234,7 +248,7 @@ async function handleStart() {
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
   padding: 10px 14px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #fca5a5;
 }
 
@@ -254,7 +268,7 @@ async function handleStart() {
   border: none;
   border-radius: 8px;
   padding: 12px 20px;
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.15s;

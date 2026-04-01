@@ -159,7 +159,7 @@ function onYearToInput(e: Event) {
   padding: 8px 14px;
   cursor: pointer;
   color: #a1a1aa; /* zinc-400 */
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 500;
   transition: background-color 0.15s, color 0.15s;
 }
@@ -178,7 +178,7 @@ function onYearToInput(e: Event) {
 .active-badge {
   background-color: #7c3aed; /* violet-700 */
   color: white;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   border-radius: 10px;
   padding: 1px 6px;
@@ -217,7 +217,7 @@ function onYearToInput(e: Event) {
 }
 
 .filter-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -230,7 +230,7 @@ function onYearToInput(e: Event) {
   border: 1px solid #3f3f46;
   border-radius: 6px;
   padding: 7px 10px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #d4d4d8;
   outline: none;
   transition: border-color 0.15s;
@@ -255,7 +255,7 @@ function onYearToInput(e: Event) {
   border: 1px solid #3f3f46;
   border-radius: 6px;
   padding: 6px 14px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #a1a1aa;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;

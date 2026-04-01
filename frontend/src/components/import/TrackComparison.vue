@@ -108,7 +108,7 @@ function formatDuration(seconds: number): string {
 
 <style scoped>
 .track-comparison {
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-family: ui-monospace, Consolas, monospace;
 }
 
@@ -124,7 +124,7 @@ function formatDuration(seconds: number): string {
 .col-header {
   background-color: #27272a;
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: #71717a;
   text-transform: uppercase;
@@ -205,7 +205,7 @@ function formatDuration(seconds: number): string {
 
 .track-sub {
   color: #71717a;
-  font-size: 11px;
+  font-size: var(--text-xs);
   display: flex;
   align-items: center;
   gap: 6px;

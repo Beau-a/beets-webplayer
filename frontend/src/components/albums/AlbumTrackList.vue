@@ -290,7 +290,7 @@ function formatClass(format: string): string {
 }
 
 .disc-header {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -307,7 +307,7 @@ function formatClass(format: string): string {
 .track-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--text-base);
 }
 
 .track-table thead tr {
@@ -317,7 +317,7 @@ function formatClass(format: string): string {
 .track-table th {
   text-align: left;
   padding: 8px 12px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -367,7 +367,7 @@ function formatClass(format: string): string {
 .track-num-text {
   display: block;
   color: #71717a;
-  font-size: 12px;
+  font-size: var(--text-sm);
   line-height: 1;
   user-select: none;
 }
@@ -465,12 +465,12 @@ function formatClass(format: string): string {
 
 .track-bitrate {
   color: #71717a;
-  font-size: 12px;
+  font-size: var(--text-sm);
   text-align: right;
 }
 
 .format-pill {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 2px 6px;

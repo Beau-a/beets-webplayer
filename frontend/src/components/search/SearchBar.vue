@@ -108,7 +108,7 @@ function clearSearch() {
   background: transparent;
   border: none;
   outline: none;
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #f4f4f5; /* zinc-100 */
   padding: 12px 0;
   min-width: 0;

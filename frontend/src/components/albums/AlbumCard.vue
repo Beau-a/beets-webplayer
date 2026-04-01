@@ -291,7 +291,7 @@ async function onPlayClick() {
 }
 
 .card-title {
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: #f4f4f5; /* zinc-100 */
   white-space: nowrap;
@@ -301,7 +301,7 @@ async function onPlayClick() {
 }
 
 .card-artist {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a; /* zinc-500 */
   white-space: nowrap;
   overflow: hidden;
@@ -326,12 +326,12 @@ async function onPlayClick() {
 }
 
 .card-year {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b; /* zinc-600 */
 }
 
 .format-badge {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 2px 6px;

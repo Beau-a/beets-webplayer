@@ -178,7 +178,7 @@ function baseName(path: string): string {
 }
 
 .connecting-text {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   margin: 0;
 }
@@ -239,7 +239,7 @@ function baseName(path: string): string {
 }
 
 .result-title {
-  font-size: 20px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: #f4f4f5;
   margin: 0 0 20px;
@@ -267,7 +267,7 @@ function baseName(path: string): string {
 }
 
 .stat-value {
-  font-size: 22px;
+  font-size: var(--text-2xl);
   font-weight: 700;
 }
 
@@ -277,7 +277,7 @@ function baseName(path: string): string {
 .stat-duration { color: #a78bfa; }
 
 .stat-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #52525b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -292,7 +292,7 @@ function baseName(path: string): string {
   border: 1px solid #1f1f23;
   border-radius: 8px;
   font-family: ui-monospace, Consolas, monospace;
-  font-size: 11px;
+  font-size: var(--text-xs);
   margin-bottom: 24px;
 }
 
@@ -335,7 +335,7 @@ function baseName(path: string): string {
 }
 
 .result-error-msg {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   text-align: center;
   margin: 0 0 24px;
@@ -353,7 +353,7 @@ function baseName(path: string): string {
   justify-content: center;
   padding: 10px 20px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 500;
   cursor: pointer;
   border: none;

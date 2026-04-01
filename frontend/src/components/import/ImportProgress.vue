@@ -171,7 +171,7 @@ function doAbort() {
 }
 
 .current-path {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #52525b;
   font-family: ui-monospace, Consolas, monospace;
   max-width: 500px;
@@ -186,7 +186,7 @@ function doAbort() {
   border: 1px solid #3f3f46;
   border-radius: 6px;
   padding: 6px 14px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
@@ -222,7 +222,7 @@ function doAbort() {
 
 .progress-fraction,
 .progress-pct {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: #71717a;
 }
 
@@ -238,7 +238,7 @@ function doAbort() {
   max-height: 320px;
   overflow-y: auto;
   font-family: ui-monospace, Consolas, monospace;
-  font-size: 12px;
+  font-size: var(--text-sm);
   scroll-behavior: smooth;
 }
 
@@ -286,7 +286,7 @@ function doAbort() {
 
 .log-year {
   color: #71717a;
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
 .log-reason {
@@ -321,7 +321,7 @@ function doAbort() {
 }
 
 .abort-body {
-  font-size: 14px;
+  font-size: var(--text-md);
   color: #71717a;
   line-height: 1.5;
   margin: 0 0 24px;
@@ -338,7 +338,7 @@ function doAbort() {
   border: none;
   border-radius: 7px;
   padding: 9px 16px;
-  font-size: 13px;
+  font-size: var(--text-base);
   color: #a1a1aa;
   cursor: pointer;
   transition: background-color 0.15s;
@@ -353,7 +353,7 @@ function doAbort() {
   border: none;
   border-radius: 7px;
   padding: 9px 16px;
-  font-size: 13px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: #fff;
   cursor: pointer;
