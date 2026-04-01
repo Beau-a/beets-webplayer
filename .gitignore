@@ -48,6 +48,7 @@ docs/_build/
 target/
 .python-version
 .env
+backend/.env
 env/
 venv/
 backend/venv/

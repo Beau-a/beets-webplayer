@@ -1,9 +1,12 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 
+# Resolve .env relative to this file so the server can be started from any directory.
+_ENV_FILE = Path(__file__).parent.parent / ".env"
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=str(_ENV_FILE), env_file_encoding="utf-8")
 
     beets_db_path: str = "/mnt/nfs/musiclibrary.db"
     beets_config_path: str = str(Path.home() / ".config/beets/config.yaml")
