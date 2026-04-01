@@ -1,146 +1,65 @@
-.. image:: https://img.shields.io/pypi/v/beets.svg
-    :target: https://pypi.python.org/pypi/beets
+beets-webplayer
+===============
 
-.. image:: https://img.shields.io/codecov/c/github/beetbox/beets.svg
-    :target: https://app.codecov.io/github/beetbox/beets
+A self-hosted web music player and library manager built on top of `beets <https://beets.io>`_.
 
-.. image:: https://img.shields.io/github/actions/workflow/status/beetbox/beets/ci.yaml
-    :target: https://github.com/beetbox/beets/actions
+Browse your beets music library, stream tracks directly in the browser, manage
+imports, and maintain your collection — all from a clean dark-themed web UI.
 
-.. image:: https://repology.org/badge/tiny-repos/beets.svg
-    :target: https://repology.org/project/beets/versions
+.. image:: https://img.shields.io/badge/backend-FastAPI-009688?style=flat
+.. image:: https://img.shields.io/badge/frontend-Vue%203-42b883?style=flat
+.. image:: https://img.shields.io/badge/requires-beets-blueviolet?style=flat
 
-beets
-=====
+Features
+--------
 
-Beets is the media library management system for obsessive music geeks.
+- **Album browser** — grid and list views with filtering by genre, format, year range, and artist
+- **Artist view** — per-artist album list with blurred header art
+- **Track playback** — HTML5 audio streaming with range request support, queue management, and player bar
+- **Import UI** — browser-based beets import with candidate selection and track comparison
+- **Library management** — edit track/album metadata, relocate artist files, remove albums
+- **Album art** — served directly from your beets library
 
-The purpose of beets is to get your music collection right once and for all. It
-catalogs your collection, automatically improving its metadata as it goes. It
-then provides a suite of tools for manipulating and accessing your music.
+Stack
+-----
 
-Here's an example of beets' brainy tag corrector doing its thing:
+- **Backend**: Python / FastAPI — thin API layer over the beets SQLite library database
+- **Frontend**: Vue 3 + TypeScript + Vite — single-page app served separately
 
-::
+Requirements
+------------
 
-    $ beet import ~/music/ladytron
-    Tagging:
-        Ladytron - Witching Hour
-    (Similarity: 98.4%)
-     * Last One Standing      -> The Last One Standing
-     * Beauty                 -> Beauty*2
-     * White Light Generation -> Whitelightgenerator
-     * All the Way            -> All the Way...
+- `beets <https://beets.io>`_ must be installed and your library already set up.
+  This project does not manage or modify beets itself — it reads from the beets
+  SQLite database and calls beets CLI commands for import and file operations.
+- Python 3.11+
+- Node.js 18+ (for frontend dev / build)
 
-Because beets is designed as a library, it can do almost anything you can
-imagine for your music collection. Via plugins_, beets becomes a panacea:
+Getting Started
+---------------
 
-- Fetch or calculate all the metadata you could possibly need: `album art`_,
-  lyrics_, genres_, tempos_, ReplayGain_ levels, or `acoustic fingerprints`_.
-- Get metadata from MusicBrainz_, Discogs_, and Beatport_. Or guess metadata
-  using songs' filenames or their acoustic fingerprints.
-- `Transcode audio`_ to any format you like.
-- Check your library for `duplicate tracks and albums`_ or for `albums that are
-  missing tracks`_.
-- Clean up crufty tags left behind by other, less-awesome tools.
-- Embed and extract album art from files' metadata.
-- Browse your music library graphically through a Web browser and play it in any
-  browser that supports `HTML5 Audio`_.
-- Analyze music files' metadata from the command line.
-- Listen to your library with a music player that speaks the MPD_ protocol and
-  works with a staggering variety of interfaces.
+1. Configure ``backend/app/config.py`` with your beets DB path and music base path.
+2. Start the backend::
 
-If beets doesn't do what you want yet, `writing your own plugin`_ is shockingly
-simple if you know a little Python.
+    cd backend
+    pip install -r requirements.txt
+    uvicorn app.main:app --host 0.0.0.0 --port 5000
 
-.. _acoustic fingerprints: https://beets.readthedocs.org/page/plugins/chroma.html
+3. Start the frontend (dev)::
 
-.. _album art: https://beets.readthedocs.org/page/plugins/fetchart.html
+    cd frontend
+    npm install
+    npm run dev
 
-.. _albums that are missing tracks: https://beets.readthedocs.org/page/plugins/missing.html
+   Or build for production::
 
-.. _beatport: https://www.beatport.com
+    npm run build
 
-.. _discogs: https://www.discogs.com/
+4. Open ``http://localhost:5173`` in your browser.
 
-.. _duplicate tracks and albums: https://beets.readthedocs.org/page/plugins/duplicates.html
+Note
+----
 
-.. _genres: https://beets.readthedocs.org/page/plugins/lastgenre.html
-
-.. _html5 audio: https://html.spec.whatwg.org/multipage/media.html#the-audio-element
-
-.. _lyrics: https://beets.readthedocs.org/page/plugins/lyrics.html
-
-.. _mpd: https://www.musicpd.org/
-
-.. _musicbrainz: https://musicbrainz.org/
-
-.. _musicbrainz music collection: https://musicbrainz.org/doc/Collections/
-
-.. _plugins: https://beets.readthedocs.org/page/plugins/
-
-.. _replaygain: https://beets.readthedocs.org/page/plugins/replaygain.html
-
-.. _tempos: https://beets.readthedocs.org/page/plugins/acousticbrainz.html
-
-.. _transcode audio: https://beets.readthedocs.org/page/plugins/convert.html
-
-.. _writing your own plugin: https://beets.readthedocs.org/page/dev/plugins/index.html
-
-Install
--------
-
-You can install beets by typing ``pip install beets`` or directly from Github
-(see details here_). Beets has also been packaged in the `software
-repositories`_ of several distributions. Check out the `Getting Started`_ guide
-for more information.
-
-.. _getting started: https://beets.readthedocs.org/page/guides/main.html
-
-.. _here: https://beets.readthedocs.io/en/latest/faq.html#run-the-latest-source-version-of-beets
-
-.. _software repositories: https://repology.org/project/beets/versions
-
-Contribute
-----------
-
-Thank you for considering contributing to ``beets``! Whether you're a programmer
-or not, you should be able to find all the info you need at CONTRIBUTING.rst_.
-
-.. _contributing.rst: https://github.com/beetbox/beets/blob/master/CONTRIBUTING.rst
-
-Read More
----------
-
-Learn more about beets at `its Web site`_. Follow `@b33ts`_ on Mastodon for news
-and updates.
-
-.. _@b33ts: https://fosstodon.org/@beets
-
-.. _its web site: https://beets.io/
-
-Contact
--------
-
-- Encountered a bug you'd like to report? Check out our `issue tracker`_!
-
-  - If your issue hasn't already been reported, please `open a new ticket`_ and
-    we'll be in touch with you shortly.
-  - If you'd like to vote on a feature/bug, simply give a :+1: on issues you'd
-    like to see prioritized over others.
-  - Need help/support, would like to start a discussion, have an idea for a new
-    feature, or would just like to introduce yourself to the team? Check out
-    `GitHub Discussions`_!
-
-.. _github discussions: https://github.com/beetbox/beets/discussions
-
-.. _issue tracker: https://github.com/beetbox/beets/issues
-
-.. _open a new ticket: https://github.com/beetbox/beets/issues/new/choose
-
-Authors
--------
-
-Beets is by `Adrian Sampson`_ with a supporting cast of thousands.
-
-.. _adrian sampson: https://www.cs.cornell.edu/~asampson/
+This project is a fork of the `beets <https://github.com/beetbox/beets>`_ repository
+but is an independent application built alongside beets, not a modification of it.
+The beets source code is not used directly — only the beets library database and CLI.
