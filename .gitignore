@@ -64,6 +64,11 @@ pyrightconfig.json
 pyrefly.toml
 .pytest_cache/
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
 # Logs
 *.log
 npm-debug.log*
