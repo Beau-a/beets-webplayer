@@ -39,6 +39,7 @@ export interface CandidatesPayload {
 export interface ImportLogEntry {
   type: 'imported' | 'skipped' | 'error'
   path: string
+  album_id?: number
   album?: string
   artist?: string
   year?: number

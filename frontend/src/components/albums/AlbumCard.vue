@@ -21,7 +21,7 @@
 
         <!-- Play button overlay -->
         <div class="play-overlay" @click.prevent="onPlayClick">
-          <button class="play-circle" :class="{ 'play-circle-loading': isLoading }" :title="`Play ${album.album}`">
+          <button class="play-circle" :class="{ 'play-circle-loading': isLoading }" :title="`Play ${album.album}`" :aria-label="`Play ${album.album}`">
             <svg v-if="!isLoading" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="5,3 19,12 5,21"/>
             </svg>

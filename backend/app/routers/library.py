@@ -250,6 +250,10 @@ async def run_task(body: LibraryTaskRequest) -> LibraryTaskResponse:
         if body.task in ("mbsync", "fetchart") and body.album_ids:
             for aid in body.album_ids:
                 cmd.append(f"id:{aid}")
+        elif body.task == "lyrics" and body.album_ids:
+            # Fetch lyrics for all tracks in the specified albums
+            for aid in body.album_ids:
+                cmd.append(f"album_id:{aid}")
         elif body.task == "lyrics" and body.item_ids:
             for iid in body.item_ids:
                 cmd.append(f"id:{iid}")

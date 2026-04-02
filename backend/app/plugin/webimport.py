@@ -67,9 +67,11 @@ class WebImportSession(ImportSession):
 
     def _on_album_imported(self, lib, album) -> None:
         """Called by beets after an album is successfully written to the library."""
+        log.info("album_imported event: album=%s artist=%s", getattr(album, 'album', '?'), getattr(album, 'albumartist', '?'))
         self.counters["imported"] += 1
         try:
             self.bridge.send_progress("album_imported", {
+                "album_id": album.id,
                 "album": album.album or "",
                 "artist": album.albumartist or "",
                 "year": album.year or 0,
@@ -77,6 +79,14 @@ class WebImportSession(ImportSession):
             })
         except Exception as exc:
             log.debug("WebImportSession: error sending album_imported event: %s", exc)
+
+    # ------------------------------------------------------------------
+    # Required abstract method overrides
+    # ------------------------------------------------------------------
+
+    def should_resume(self, path) -> bool:
+        """Never resume a partial import — always start fresh."""
+        return False
 
     # ------------------------------------------------------------------
     # Core interception points — called by the beets import pipeline
@@ -101,10 +111,12 @@ class WebImportSession(ImportSession):
 
         # Notify the browser that we've started processing this album.
         album_path = _task_path(task)
+        log.info("choose_match called: path=%s candidates=%d", album_path, len(candidates))
         self.bridge.send_progress("album_start", {"path": album_path})
 
         if not candidates:
             # No MusicBrainz matches found — import with existing tags.
+            log.info("choose_match: no candidates, returning ASIS for %s", album_path)
             return Action.ASIS
 
         # Block the import thread until the browser responds.
@@ -134,7 +146,11 @@ class WebImportSession(ImportSession):
             return Action.SKIP
 
         # "skip" or any unrecognised value
-        self._send_skipped(task, "skipped by user")
+        reason = choice.get("reason", "")
+        if reason == "timeout":
+            self._send_skipped(task, "timed out waiting for response")
+        else:
+            self._send_skipped(task, "skipped by user")
         return Action.SKIP
 
     def choose_item(self, task: ImportTask):
@@ -166,6 +182,7 @@ class WebImportSession(ImportSession):
         This method IS expected to call task.set_choice() directly.
         Default policy: skip the duplicate.
         """
+        log.info("resolve_duplicate called: path=%s dupes=%d", _task_path(task), len(found_duplicates))
         task.set_choice(Action.SKIP)
         self.counters["skipped"] += 1
         try:

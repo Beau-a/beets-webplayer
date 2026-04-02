@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="open" class="modal-backdrop" @mousedown.self="$emit('close')">
-      <div class="modal">
+      <div class="modal" ref="modalRef">
 
         <!-- REMOVE MODE -->
         <template v-if="activeMode === 'remove'">
@@ -72,8 +72,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { removeArtist, relocateArtist } from '@/api/library'
+import { useFocusTrap } from '@/composables/useFocusTrap'
 
 const props = defineProps<{
   open: boolean
@@ -86,6 +87,9 @@ const emit = defineEmits<{
   removed: []
   done: [result: { relocated: number; failed: number; errors: string[] }]
 }>()
+
+const modalRef = ref<HTMLElement | null>(null)
+useFocusTrap(modalRef, toRef(props, 'open'), () => emit('close'))
 
 const saving = ref(false)
 const error = ref('')

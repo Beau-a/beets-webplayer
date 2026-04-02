@@ -180,3 +180,7 @@ async def import_websocket(websocket: WebSocket, session_id: str):
             await task
         except asyncio.CancelledError:
             pass
+
+    # Clear the session now that the WS is done.  The import thread also
+    # schedules a delayed clear as a safety net; calling it twice is harmless.
+    import_service.clear_session()

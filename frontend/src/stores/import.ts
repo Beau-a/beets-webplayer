@@ -22,6 +22,7 @@ export const useImportStore = defineStore('import', () => {
   const candidatesPayload = ref<CandidatesPayload | null>(null)
   const selectedCandidateIndex = ref<number>(0)
   const importLog = ref<ImportLogEntry[]>([])
+  const importedAlbumIds = ref<number[]>([])
   const progress = reactive<ImportProgress>({
     completed: 0,
     total: 0,
@@ -40,6 +41,7 @@ export const useImportStore = defineStore('import', () => {
     directory.value = dir
     sessionState.value = 'connecting'
     importLog.value = []
+    importedAlbumIds.value = []
     progress.completed = 0
     progress.total = 0
     progress.currentPath = ''
@@ -91,6 +93,7 @@ export const useImportStore = defineStore('import', () => {
   }
 
   function handleMessage(type: string, payload: unknown) {
+    console.log('[import WS]', type, 'state=', sessionState.value, payload)
     switch (type) {
       case 'connected':
         // WebSocket handshake confirmed
@@ -121,18 +124,22 @@ export const useImportStore = defineStore('import', () => {
       }
 
       case 'album_imported': {
-        const p = payload as { album: string; artist: string; year: number; track_count: number }
+        const p = payload as { album_id: number; album: string; artist: string; year: number; track_count: number }
+        if (p.album_id) importedAlbumIds.value.push(p.album_id)
         importLog.value.push({
           type: 'imported',
           path: progress.currentPath,
+          album_id: p.album_id,
           album: p.album,
           artist: p.artist,
           year: p.year,
         })
         progress.completed++
-        // Return to running state
-        if (sessionState.value === 'waiting_choice') {
-          sessionState.value = 'running'
+        // Only leave waiting_choice if this event is for the current album being decided.
+        // If sessionState is waiting_choice it means the user is still making a choice —
+        // don't hide the candidate panel just because an earlier album finished importing.
+        if (sessionState.value === 'running') {
+          // already running, no state change needed
         }
         break
       }
@@ -145,9 +152,7 @@ export const useImportStore = defineStore('import', () => {
           message: p.reason,
         })
         progress.completed++
-        if (sessionState.value === 'waiting_choice') {
-          sessionState.value = 'running'
-        }
+        // Same rationale: don't collapse candidate view for a skip of an earlier album
         break
       }
 
@@ -226,6 +231,7 @@ export const useImportStore = defineStore('import', () => {
     candidatesPayload.value = null
     selectedCandidateIndex.value = 0
     importLog.value = []
+    importedAlbumIds.value = []
     progress.completed = 0
     progress.total = 0
     progress.currentPath = ''
@@ -244,6 +250,7 @@ export const useImportStore = defineStore('import', () => {
     candidatesPayload,
     selectedCandidateIndex,
     importLog,
+    importedAlbumIds,
     progress,
     error,
     directory,

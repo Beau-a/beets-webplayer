@@ -21,7 +21,9 @@
               :key="track.id"
               class="track-row"
               :class="{ 'track-row-playing': isCurrentlyPlaying(track.id) }"
+              tabindex="0"
               @click="playFromTrack(track)"
+              @keydown.enter="playFromTrack(track)"
             >
               <td class="col-num">
                 <div class="num-cell">
@@ -30,6 +32,7 @@
                     class="track-num-play play-btn"
                     :class="{ 'play-btn-active': isCurrentlyPlaying(track.id) }"
                     :title="isCurrentlyPlaying(track.id) ? 'Now playing' : 'Play'"
+                  :aria-label="isCurrentlyPlaying(track.id) ? 'Now playing' : 'Play'"
                     @click.stop="playFromTrack(track)"
                   >
                     <svg v-if="isCurrentlyPlaying(track.id) && playerStore.isPlaying" viewBox="0 0 24 24" fill="currentColor">
@@ -53,19 +56,19 @@
               <td v-if="hasMixedFormats" class="col-bitrate track-bitrate">{{ formatBitrate(track.bitrate) }}</td>
               <td class="col-actions">
                 <div class="row-actions">
-                  <button class="row-action-btn" title="Add to queue" @click.stop="addToQueue(track)">
+                  <button class="row-action-btn" title="Add to queue" aria-label="Add to queue" @click.stop="addToQueue(track)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                   </button>
                   <template v-if="showActions">
-                    <button class="row-action-btn row-action-edit" title="Edit track" @click.stop="emit('edit-track', track)">
+                    <button class="row-action-btn row-action-edit" title="Edit track" aria-label="Edit track" @click.stop="emit('edit-track', track)">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                       </svg>
                     </button>
-                    <button class="row-action-btn row-action-delete" title="Remove from library" @click.stop="emit('delete-track', track)">
+                    <button class="row-action-btn row-action-delete" title="Remove from library" aria-label="Remove from library" @click.stop="emit('delete-track', track)">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"/>
                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -109,6 +112,7 @@
                   class="track-num-play play-btn"
                   :class="{ 'play-btn-active': isCurrentlyPlaying(track.id) }"
                   :title="isCurrentlyPlaying(track.id) ? 'Now playing' : 'Play'"
+                  :aria-label="isCurrentlyPlaying(track.id) ? 'Now playing' : 'Play'"
                   @click.stop="playFromTrack(track)"
                 >
                   <svg v-if="isCurrentlyPlaying(track.id) && playerStore.isPlaying" viewBox="0 0 24 24" fill="currentColor">
@@ -132,19 +136,19 @@
             <td v-if="hasMixedFormats" class="col-bitrate track-bitrate">{{ formatBitrate(track.bitrate) }}</td>
             <td class="col-actions">
               <div class="row-actions">
-                <button class="row-action-btn" title="Add to queue" @click.stop="addToQueue(track)">
+                <button class="row-action-btn" title="Add to queue" aria-label="Add to queue" @click.stop="addToQueue(track)">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                   </svg>
                 </button>
                 <template v-if="showActions">
-                  <button class="row-action-btn row-action-edit" title="Edit track" @click.stop="emit('edit-track', track)">
+                  <button class="row-action-btn row-action-edit" title="Edit track" aria-label="Edit track" @click.stop="emit('edit-track', track)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                   </button>
-                  <button class="row-action-btn row-action-delete" title="Remove from library" @click.stop="emit('delete-track', track)">
+                  <button class="row-action-btn row-action-delete" title="Remove from library" aria-label="Remove from library" @click.stop="emit('delete-track', track)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="3 6 5 6 21 6"/>
                       <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -330,8 +334,10 @@ function formatClass(format: string): string {
   cursor: pointer;
 }
 
-.track-row:hover {
+.track-row:hover,
+.track-row:focus-visible {
   background-color: #27272a; /* zinc-800 */
+  outline: none;
 }
 
 .track-row-playing {

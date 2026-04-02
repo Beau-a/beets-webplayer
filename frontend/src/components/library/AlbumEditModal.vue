@@ -1,10 +1,10 @@
 <template>
   <Teleport to="body">
     <div v-if="open && album" class="modal-backdrop" @mousedown.self="$emit('close')">
-      <div class="modal">
+      <div class="modal" ref="modalRef">
         <div class="modal-header">
           <h2 class="modal-title">Edit Album</h2>
-          <button class="close-btn" @click="$emit('close')">
+          <button class="close-btn" aria-label="Close" @click="$emit('close')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -81,9 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { updateAlbum, type AlbumUpdatePayload } from '@/api/library'
 import type { AlbumDetail } from '@/types/album'
+import { useFocusTrap } from '@/composables/useFocusTrap'
 
 const props = defineProps<{
   album: AlbumDetail | null
@@ -94,6 +95,9 @@ const emit = defineEmits<{
   close: []
   saved: [updated: unknown]
 }>()
+
+const modalRef = ref<HTMLElement | null>(null)
+useFocusTrap(modalRef, toRef(props, 'open'), () => emit('close'))
 
 interface AlbumFormState {
   album: string

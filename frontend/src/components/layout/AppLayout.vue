@@ -2,20 +2,25 @@
   <div class="app-layout" :style="{ '--sidebar-w': sidebarCollapsed ? '56px' : '200px' }">
     <AppSidebar
       :collapsed="sidebarCollapsed"
-      :flyout-open="flyoutOpen"
+      :active-letter="activeLetter"
       @toggle="toggleSidebar"
-      @toggle-flyout="flyoutOpen = !flyoutOpen"
+      @select-letter="onSelectLetter"
     />
 
     <ArtistBrowser
       :visible="flyoutOpen"
       :sidebar-collapsed="sidebarCollapsed"
-      @close="flyoutOpen = false"
+      :active-letter="activeLetter"
+      @close="closeFlyout"
     />
 
     <div class="main-wrapper" :style="{ marginLeft: mainMargin }">
       <main class="main-content">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <Transition name="fade" mode="out-in">
+            <component :is="Component" :key="$route.path" />
+          </Transition>
+        </RouterView>
       </main>
 
       <!-- Real player bar -->
@@ -39,11 +44,22 @@ import QueueDrawer from '@/components/player/QueueDrawer.vue'
 
 const sidebarCollapsed = ref(localStorage.getItem('sidebar.collapsed') === 'true')
 const queueOpen = ref(false)
-const flyoutOpen = ref(false)
+const activeLetter = ref('')
+
+const flyoutOpen = computed(() => activeLetter.value !== '')
 
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
   localStorage.setItem('sidebar.collapsed', String(sidebarCollapsed.value))
+}
+
+function onSelectLetter(letter: string) {
+  // Toggle: clicking the active letter closes the flyout
+  activeLetter.value = activeLetter.value === letter ? '' : letter
+}
+
+function closeFlyout() {
+  activeLetter.value = ''
 }
 
 const sidebarWidth = computed(() => sidebarCollapsed.value ? 56 : 200)
@@ -60,10 +76,18 @@ const playerBarLeft = computed(() => {
   const extra = flyoutOpen.value ? flyoutWidth : 0
   return `${base + extra}px`
 })
-
 </script>
 
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .app-layout {
   display: flex;
   height: 100vh;
@@ -89,8 +113,8 @@ const playerBarLeft = computed(() => {
   bottom: 0;
   right: 0;
   height: 72px;
-  background-color: #09090b; /* zinc-950 */
-  border-top: 1px solid #27272a; /* zinc-800 */
+  background-color: #09090b;
+  border-top: 1px solid #27272a;
   z-index: 50;
   transition: left 0.2s ease;
 }

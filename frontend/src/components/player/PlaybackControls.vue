@@ -5,6 +5,7 @@
       class="ctrl-btn"
       :class="{ 'ctrl-active': store.shuffleEnabled }"
       title="Shuffle"
+      aria-label="Shuffle"
       @click="store.toggleShuffle()"
     >
       <!-- Shuffle icon -->
@@ -21,6 +22,7 @@
       class="ctrl-btn ctrl-skip"
       :disabled="!store.hasPrevious"
       title="Previous"
+      aria-label="Previous"
       @click="store.previous()"
     >
       <!-- Skip-back icon -->
@@ -35,6 +37,7 @@
       class="ctrl-btn ctrl-play"
       :disabled="!store.currentTrack"
       :title="store.isPlaying ? 'Pause' : 'Play'"
+      :aria-label="store.isPlaying ? 'Pause' : 'Play'"
       @click="togglePlay"
     >
       <!-- Buffering spinner -->
@@ -57,6 +60,7 @@
       class="ctrl-btn ctrl-skip"
       :disabled="!store.hasNext"
       title="Next"
+      aria-label="Next"
       @click="store.next()"
     >
       <!-- Skip-forward icon -->
@@ -71,6 +75,7 @@
       class="ctrl-btn"
       :class="repeatClass"
       :title="repeatTitle"
+      :aria-label="repeatTitle"
       @click="store.cycleRepeat()"
     >
       <!-- Repeat-one icon -->

@@ -1,6 +1,6 @@
 <template>
   <div class="settings-view">
-    <h1 class="page-title">Library Management</h1>
+    <h1 class="page-title">Tools</h1>
 
     <!-- Library Stats -->
     <section class="section">
@@ -50,6 +50,7 @@
         Run beets maintenance operations against the full library. Each task runs in the background —
         check the output below for progress.
       </p>
+
       <div class="tasks-grid">
         <div v-for="task in taskDefs" :key="task.id" class="task-card">
           <div class="task-header">
@@ -81,12 +82,25 @@
         </div>
       </div>
     </section>
+
+    <!-- Import Music -->
+    <section class="section">
+      <h2 class="section-title">Import Music</h2>
+      <p class="section-desc">
+        Point beets at a directory to scan for new music. Matched albums will be identified
+        against MusicBrainz and you'll be able to review each match before it's imported.
+      </p>
+      <div class="import-embed">
+        <ImportView />
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, h } from 'vue'
 import { fetchLibraryStats, runLibraryTask, getLibraryTask, type LibraryStats } from '@/api/library'
+import ImportView from './ImportView.vue'
 
 // ---------------------------------------------------------------------------
 // Stats
@@ -253,6 +267,37 @@ onUnmounted(() => {
   background-color: #18181b;
   color: #f4f4f5;
   min-height: 100%;
+}
+
+.import-embed :deep(.import-view) {
+  padding: 0;
+  background: transparent;
+  min-height: unset;
+}
+
+.import-embed :deep(.import-start) {
+  display: block;
+}
+
+.import-embed :deep(.connecting-state),
+.import-embed :deep(.result-state) {
+  min-height: unset;
+  padding: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.import-embed :deep(.result-card) {
+  max-width: 100%;
+}
+
+.import-embed :deep(.session-layout) {
+  padding: 0;
+}
+
+.import-embed :deep(.candidate-section) {
+  padding: 0;
+  padding-top: 16px;
 }
 
 .page-title {

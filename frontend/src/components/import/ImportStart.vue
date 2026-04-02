@@ -1,17 +1,6 @@
 <template>
   <div class="import-start">
     <div class="start-card">
-      <div class="start-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-        </svg>
-      </div>
-      <h2 class="start-title">Import Music</h2>
-      <p class="start-description">
-        Point beets at a directory to scan for new music. Matched albums will be identified
-        against MusicBrainz and you'll be able to review each match before it's imported.
-      </p>
-
       <div class="start-form">
         <div class="field">
           <label class="field-label" for="import-dir">Directory path</label>
@@ -106,51 +95,14 @@ async function handleStart() {
 
 <style scoped>
 .import-start {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-  padding: 40px 24px;
+  display: block;
 }
 
 .start-card {
-  width: 100%;
-  max-width: 520px;
-  background-color: #18181b; /* zinc-900 */
-  border: 1px solid #27272a; /* zinc-800 */
-  border-radius: 12px;
-  padding: 40px;
-}
-
-.start-icon {
-  width: 48px;
-  height: 48px;
-  background-color: rgba(139, 92, 246, 0.15);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  color: #8b5cf6; /* violet-500 */
-}
-
-.start-icon svg {
-  width: 26px;
-  height: 26px;
-}
-
-.start-title {
-  font-size: var(--text-2xl);
-  font-weight: 700;
-  color: #f4f4f5;
-  margin: 0 0 8px;
-}
-
-.start-description {
-  font-size: var(--text-md);
-  color: #71717a;
-  line-height: 1.6;
-  margin: 0 0 28px;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 10px;
+  padding: 18px 20px;
 }
 
 .start-form {

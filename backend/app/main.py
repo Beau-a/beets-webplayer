@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 
 import beets
 import beets.library
+import beets.ui
+from beets import plugins
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -18,8 +20,24 @@ async def lifespan(app: FastAPI):
     # Load beets config
     beets.config.read(user=True, defaults=True)
 
-    # Open beets Library (used for writes and complex queries)
-    lib = beets.library.Library(settings.beets_db_path)
+    # Ensure the musicbrainz metadata plugin is loaded so autotag lookups work.
+    # In this version of beets, MusicBrainz is a plugin, not built-in core.
+    plugins.load_plugins()
+    loaded_names = {type(p).__name__.lower() for p in plugins.find_plugins()}
+    if "musicbrainzplugin" not in loaded_names:
+        from beets.plugins import _get_plugin, _instances
+        mb_plugin = _get_plugin("musicbrainz")
+        if mb_plugin is not None:
+            _instances.append(mb_plugin)
+
+    # Open beets Library (used for writes and complex queries).
+    # Pass directory and path_formats explicitly from config so file operations
+    # use the user's configured destination rather than the ~/Music default.
+    lib = beets.library.Library(
+        settings.beets_db_path,
+        directory=beets.config["directory"].as_filename(),
+        path_formats=beets.ui.get_path_formats(),
+    )
     app.state.lib = lib
 
     # Open a separate read-only SQLite connection (used for fast read queries)
@@ -48,6 +66,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
+        allow_origin_regex=r"https?://.*",
         allow_methods=["*"],
         allow_headers=["*"],
     )

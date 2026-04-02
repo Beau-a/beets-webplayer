@@ -7,7 +7,7 @@
         {{ store.totalAlbums }} album{{ store.totalAlbums !== 1 ? 's' : '' }}
       </div>
       <div class="view-toggle">
-        <button class="view-btn" :class="{ active: viewMode === 'grid' }" title="Grid view" @click="setViewMode('grid')">
+        <button class="view-btn" :class="{ active: viewMode === 'grid' }" title="Grid view" aria-label="Grid view" @click="setViewMode('grid')">
           <svg viewBox="0 0 24 24" fill="currentColor" class="view-icon">
             <rect x="3" y="3" width="7" height="7" rx="1"/>
             <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -15,7 +15,7 @@
             <rect x="14" y="14" width="7" height="7" rx="1"/>
           </svg>
         </button>
-        <button class="view-btn" :class="{ active: viewMode === 'list' }" title="List view" @click="setViewMode('list')">
+        <button class="view-btn" :class="{ active: viewMode === 'list' }" title="List view" aria-label="List view" @click="setViewMode('list')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="view-icon">
             <line x1="8" y1="6" x2="21" y2="6"/>
             <line x1="8" y1="12" x2="21" y2="12"/>
@@ -36,23 +36,6 @@
           @update:model-value="store.filters.query = $event"
           @search="onSearch"
         />
-        <div class="sort-control">
-          <label class="sort-label">Sort</label>
-          <div class="sort-select-wrapper">
-            <select class="sort-select" :value="store.filters.sort" @change="onSortSelectChange">
-              <option value="albumartist+">Artist A–Z</option>
-              <option value="albumartist-">Artist Z–A</option>
-              <option value="album+">Album A–Z</option>
-              <option value="album-">Album Z–A</option>
-              <option value="year-">Year (newest)</option>
-              <option value="year+">Year (oldest)</option>
-              <option value="added-">Recently Added</option>
-            </select>
-            <svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </div>
-        </div>
         <span v-if="activeFilterCount > 0" class="filter-count-badge">{{ activeFilterCount }} active</span>
       </div>
       <FilterPanel
@@ -73,7 +56,7 @@
       <div class="artist-chip-row">
         <div class="artist-chip">
           <span class="artist-chip-label">Artist: {{ activeArtistFilter }}</span>
-          <button class="artist-chip-clear" @click="clearArtistFilter" title="Clear artist filter">
+          <button class="artist-chip-clear" @click="clearArtistFilter" title="Clear artist filter" aria-label="Clear artist filter">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="chip-x-icon">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -103,6 +86,23 @@
     <div class="library-content" :style="{ opacity: store.isLoading ? 0.4 : 1, transition: 'opacity 0.15s' }">
       <!-- Top pagination (no page-size selector) -->
       <div class="pagination pagination-top" v-if="!store.isLoading && store.totalAlbums > 0">
+        <div class="sort-control">
+          <label class="sort-label">Sort</label>
+          <div class="sort-select-wrapper">
+            <select class="sort-select" :value="store.filters.sort" @change="onSortSelectChange">
+              <option value="albumartist+">Artist A–Z</option>
+              <option value="albumartist-">Artist Z–A</option>
+              <option value="album+">Album A–Z</option>
+              <option value="album-">Album Z–A</option>
+              <option value="year-">Year (newest)</option>
+              <option value="year+">Year (oldest)</option>
+              <option value="added-">Recently Added</option>
+            </select>
+            <svg class="sort-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </div>
         <div class="pagination-controls">
           <button
             class="page-btn"
@@ -518,8 +518,8 @@ function goToPage(n: number) {
 .sort-select {
   background-color: #27272a;
   border: 1px solid #3f3f46;
-  border-radius: 7px;
-  padding: 8px 32px 8px 12px;
+  border-radius: 6px;
+  padding: 6px 28px 6px 10px;
   font-size: var(--text-base);
   color: #d4d4d8;
   outline: none;

@@ -84,6 +84,35 @@
           </div>
         </div>
 
+        <!-- Post-import actions (only when albums were imported) -->
+        <div v-if="store.importedAlbumIds.length > 0" class="post-import-actions">
+          <p class="post-import-label">Run for imported albums:</p>
+          <div class="post-import-btns">
+            <button
+              class="task-btn"
+              :class="{ 'task-running': artTaskState === 'running', 'task-done': artTaskState === 'done', 'task-error': artTaskState === 'error' }"
+              :disabled="artTaskState === 'running'"
+              @click="runArt"
+            >
+              <span v-if="artTaskState === 'running'" class="task-spinner" />
+              <span v-else-if="artTaskState === 'done'">✓</span>
+              <span v-else-if="artTaskState === 'error'">✗</span>
+              Get Art
+            </button>
+            <button
+              class="task-btn"
+              :class="{ 'task-running': lyricsTaskState === 'running', 'task-done': lyricsTaskState === 'done', 'task-error': lyricsTaskState === 'error' }"
+              :disabled="lyricsTaskState === 'running'"
+              @click="runLyrics"
+            >
+              <span v-if="lyricsTaskState === 'running'" class="task-spinner" />
+              <span v-else-if="lyricsTaskState === 'done'">✓</span>
+              <span v-else-if="lyricsTaskState === 'error'">✗</span>
+              Get Lyrics
+            </button>
+          </div>
+        </div>
+
         <div class="result-actions">
           <button class="result-btn btn-primary" @click="store.resetSession()">
             Import Another
@@ -118,13 +147,48 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useImportStore } from '@/stores/import'
 import ImportStart from '@/components/import/ImportStart.vue'
 import ImportProgress from '@/components/import/ImportProgress.vue'
 import CandidateList from '@/components/import/CandidateList.vue'
+import { runLibraryTask, getLibraryTask } from '@/api/library'
 
 const store = useImportStore()
+
+type TaskState = 'idle' | 'running' | 'done' | 'error'
+const artTaskState = ref<TaskState>('idle')
+const lyricsTaskState = ref<TaskState>('idle')
+
+async function pollTask(taskId: string, stateRef: typeof artTaskState) {
+  while (true) {
+    await new Promise(r => setTimeout(r, 1500))
+    const result = await getLibraryTask(taskId)
+    if (result.status === 'complete') { stateRef.value = 'done'; return }
+    if (result.status === 'error') { stateRef.value = 'error'; return }
+  }
+}
+
+async function runArt() {
+  artTaskState.value = 'running'
+  try {
+    const result = await runLibraryTask('fetchart', store.importedAlbumIds)
+    pollTask(result.task_id, artTaskState)
+  } catch {
+    artTaskState.value = 'error'
+  }
+}
+
+async function runLyrics() {
+  lyricsTaskState.value = 'running'
+  try {
+    const result = await runLibraryTask('lyrics', store.importedAlbumIds)
+    pollTask(result.task_id, lyricsTaskState)
+  } catch {
+    lyricsTaskState.value = 'error'
+  }
+}
 
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${Math.round(seconds)}s`
@@ -340,6 +404,73 @@ function baseName(path: string): string {
   text-align: center;
   margin: 0 0 24px;
   line-height: 1.5;
+}
+
+.post-import-actions {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+}
+
+.post-import-label {
+  font-size: var(--text-xs);
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 10px;
+}
+
+.post-import-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.task-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #3f3f46;
+  background-color: #27272a;
+  color: #d4d4d8;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.task-btn:hover:not(:disabled) {
+  background-color: #3f3f46;
+  border-color: #52525b;
+}
+
+.task-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.task-btn.task-done {
+  border-color: #166534;
+  color: #4ade80;
+}
+
+.task-btn.task-error {
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
+.task-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #52525b;
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 
 .result-actions {

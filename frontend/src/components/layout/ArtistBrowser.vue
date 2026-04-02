@@ -5,10 +5,10 @@
       class="artist-browser"
       :style="{ left: sidebarCollapsed ? '56px' : '200px' }"
     >
-      <!-- Header row -->
+      <!-- Header -->
       <div class="ab-header">
-        <span class="ab-title">Artists</span>
-        <button class="ab-close" @click="$emit('close')" title="Close artist browser">
+        <span class="ab-title">{{ activeLetter || 'Artists' }}</span>
+        <button class="ab-close" @click="$emit('close')" title="Close" aria-label="Close artist browser">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ab-close-icon">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
@@ -16,26 +16,10 @@
         </button>
       </div>
 
-      <!-- Letter picker -->
-      <div class="ab-letters">
-        <button
-          v-for="l in LETTERS"
-          :key="l"
-          class="ab-letter-btn"
-          :class="{
-            'ab-letter-active': activeLetter === l,
-            'ab-letter-dim': !activeLetters.includes(l),
-          }"
-          @click="selectLetter(l)"
-        >
-          {{ l }}
-        </button>
-      </div>
-
       <!-- Artist list -->
       <div class="ab-list" ref="listEl">
         <div v-if="loading" class="ab-loading">Loading…</div>
-        <div v-else-if="artists.length === 0 && activeLetter" class="ab-empty">No artists</div>
+        <div v-else-if="artists.length === 0" class="ab-empty">No artists</div>
         <button
           v-for="artist in artists"
           :key="artist.name"
@@ -51,13 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchArtists, fetchArtistLetters, type ArtistEntry } from '@/api/library'
+import { fetchArtists, type ArtistEntry } from '@/api/library'
 
 const props = defineProps<{
   visible: boolean
   sidebarCollapsed: boolean
+  activeLetter: string
 }>()
 
 const emit = defineEmits<{
@@ -65,34 +50,20 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
-
-const LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#']
-
-const activeLetter = ref('')
-const activeLetters = ref<string[]>([])
 const artists = ref<ArtistEntry[]>([])
 const loading = ref(false)
 const listEl = ref<HTMLElement | null>(null)
 
-async function loadLetters() {
-  try {
-    activeLetters.value = await fetchArtistLetters()
-  } catch {
-    activeLetters.value = []
-  }
-}
-
-async function selectLetter(letter: string) {
-  if (activeLetter.value === letter) return
-  activeLetter.value = letter
+async function loadArtists(letter: string) {
+  if (!letter) { artists.value = []; return }
   loading.value = true
   artists.value = []
   try {
     artists.value = await fetchArtists(letter)
   } finally {
     loading.value = false
+    if (listEl.value) listEl.value.scrollTop = 0
   }
-  if (listEl.value) listEl.value.scrollTop = 0
 }
 
 function onSelectArtist(name: string) {
@@ -100,13 +71,14 @@ function onSelectArtist(name: string) {
   router.push(`/artist/${encodeURIComponent(name)}`)
 }
 
-onMounted(() => {
-  loadLetters()
+// Fetch when letter changes while visible
+watch(() => props.activeLetter, (letter) => {
+  if (props.visible) loadArtists(letter)
 })
 
-// When flyout becomes visible, reload letters in case library changed
+// Fetch when panel becomes visible
 watch(() => props.visible, (val) => {
-  if (val) loadLetters()
+  if (val && props.activeLetter) loadArtists(props.activeLetter)
 })
 </script>
 
@@ -125,7 +97,6 @@ watch(() => props.visible, (val) => {
   overflow: hidden;
 }
 
-/* Slide transition */
 .flyout-enter-active,
 .flyout-leave-active {
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -136,7 +107,6 @@ watch(() => props.visible, (val) => {
   opacity: 0;
 }
 
-/* Header */
 .ab-header {
   display: flex;
   align-items: center;
@@ -148,10 +118,10 @@ watch(() => props.visible, (val) => {
 
 .ab-title {
   font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #52525b;
+  color: #a78bfa;
 }
 
 .ab-close {
@@ -176,67 +146,15 @@ watch(() => props.visible, (val) => {
   height: 14px;
 }
 
-/* Letter grid */
-.ab-letters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 10px 8px;
-  border-bottom: 1px solid #27272a;
-  flex-shrink: 0;
-}
-
-.ab-letter-btn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  border-radius: 5px;
-  border: none;
-  background: none;
-  color: #71717a;
-  cursor: pointer;
-  transition: background-color 0.12s, color 0.12s;
-}
-
-.ab-letter-btn:hover:not(.ab-letter-dim) {
-  background-color: #27272a;
-  color: #d4d4d8;
-}
-
-.ab-letter-active {
-  background-color: #5b21b6 !important;
-  color: #ede9fe !important;
-}
-
-.ab-letter-dim {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
-
-/* Artist list */
 .ab-list {
   flex: 1;
   overflow-y: auto;
   padding: 4px 0;
 }
 
-.ab-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.ab-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.ab-list::-webkit-scrollbar-thumb {
-  background: #3f3f46;
-  border-radius: 2px;
-}
+.ab-list::-webkit-scrollbar { width: 4px; }
+.ab-list::-webkit-scrollbar-track { background: transparent; }
+.ab-list::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 2px; }
 
 .ab-loading,
 .ab-empty {

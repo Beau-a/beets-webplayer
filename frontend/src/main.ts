@@ -17,9 +17,10 @@ const router = createRouter({
     { path: '/library/:albumId', component: () => import('./views/AlbumDetailView.vue') },
     { path: '/artist/:artistName', component: () => import('./views/ArtistView.vue') },
     { path: '/search', component: () => import('./views/SearchView.vue') },
-    { path: '/import', component: () => import('./views/ImportView.vue') },
-    { path: '/queue', component: () => import('./views/QueueView.vue') },
-    { path: '/settings', component: () => import('./views/SettingsView.vue') },
+    { path: '/import', redirect: '/tools' },
+    { path: '/queue', redirect: '/player' },
+    { path: '/player', component: () => import('./views/QueueView.vue') },
+    { path: '/tools', component: () => import('./views/SettingsView.vue') },
   ],
 })
 

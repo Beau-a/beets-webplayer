@@ -1,7 +1,7 @@
 <template>
   <div class="volume-control">
     <!-- Mute toggle button with volume icon -->
-    <button class="vol-icon-btn" :title="store.isMuted ? 'Unmute' : 'Mute'" @click="store.toggleMute()">
+    <button class="vol-icon-btn" :title="store.isMuted ? 'Unmute' : 'Mute'" :aria-label="store.isMuted ? 'Unmute' : 'Mute'" @click="store.toggleMute()">
       <!-- Muted -->
       <svg v-if="store.isMuted || store.volume === 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
@@ -25,10 +25,12 @@
     <input
       type="range"
       class="vol-slider"
+      aria-label="Volume"
       min="0"
-      max="1"
-      step="0.02"
-      :value="store.isMuted ? 0 : store.volume"
+      max="100"
+      step="2"
+      :value="store.isMuted ? 0 : Math.round(store.volume * 100)"
+      :aria-valuenow="store.isMuted ? 0 : Math.round(store.volume * 100)"
       @input="onInput"
     />
   </div>
@@ -40,7 +42,7 @@ import { usePlayerStore } from '@/stores/player'
 const store = usePlayerStore()
 
 function onInput(e: Event) {
-  const v = parseFloat((e.target as HTMLInputElement).value)
+  const v = parseFloat((e.target as HTMLInputElement).value) / 100
   store.setVolume(v)
   if (store.isMuted && v > 0) {
     store.toggleMute()

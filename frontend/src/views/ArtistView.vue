@@ -21,13 +21,13 @@
           {{ albums.length }} album{{ albums.length !== 1 ? 's' : '' }}
         </span>
         <div class="header-spacer" />
-        <button class="header-btn" title="Move artist files" @click="artistModalMode = 'relocate'">
+        <button class="header-btn" title="Move artist files" aria-label="Move artist files" @click="artistModalMode = 'relocate'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="header-btn-icon">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
           Move Artist
         </button>
-        <button class="header-btn header-btn-danger" title="Remove artist from library" @click="artistModalMode = 'remove'">
+        <button class="header-btn header-btn-danger" title="Remove artist from library" aria-label="Remove artist from library" @click="artistModalMode = 'remove'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="header-btn-icon">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -40,10 +40,10 @@
     </div>
 
     <!-- Split panel -->
-    <div class="split-panel">
+    <div class="split-panel" ref="splitPanelRef">
 
       <!-- Left: album list -->
-      <div class="album-list-panel">
+      <div class="album-list-panel" :style="{ width: leftPanelWidth + 'px' }">
         <div v-if="loadingAlbums" class="panel-loading">Loading albums…</div>
         <button
           v-for="alb in albums"
@@ -75,6 +75,9 @@
           </div>
         </button>
       </div>
+
+      <!-- Resize handle -->
+      <div class="resize-handle" @mousedown="onResizeStart"></div>
 
       <!-- Right: selected album detail -->
       <div class="album-detail-panel">
@@ -202,6 +205,35 @@ const loadingAlbums = ref(false)
 const selectedAlbumId = ref<number | null>(null)
 const loadingDetail = ref(false)
 const currentAlbum = ref<AlbumDetail | null>(null)
+
+// ---------- split panel resize ----------
+
+const splitPanelRef = ref<HTMLDivElement | null>(null)
+const PANEL_WIDTH_KEY = 'artistView.panelWidth'
+const leftPanelWidth = ref(Number(localStorage.getItem(PANEL_WIDTH_KEY)) || 260)
+
+function onResizeStart(e: MouseEvent) {
+  e.preventDefault()
+  const startX = e.clientX
+  const startWidth = leftPanelWidth.value
+
+  function onMouseMove(ev: MouseEvent) {
+    const delta = ev.clientX - startX
+    const panelWidth = splitPanelRef.value?.offsetWidth ?? 0
+    leftPanelWidth.value = Math.min(Math.max(startWidth + delta, 160), Math.min(480, panelWidth - 200))
+  }
+
+  function onMouseUp() {
+    localStorage.setItem(PANEL_WIDTH_KEY, String(leftPanelWidth.value))
+    window.removeEventListener('mousemove', onMouseMove)
+    window.removeEventListener('mouseup', onMouseUp)
+  }
+
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('mouseup', onMouseUp)
+}
+
+// ----------
 
 const editAlbumOpen = ref(false)
 const albumActionsMode = ref<'remove' | 'relocate' | null>(null)
@@ -433,11 +465,24 @@ watch(artistName, () => {
 
 /* Left: album list */
 .album-list-panel {
-  width: 260px;
   flex-shrink: 0;
-  border-right: 1px solid #27272a;
+  border-right: none;
   overflow-y: auto;
   padding: 6px 0;
+}
+
+/* Resize handle */
+.resize-handle {
+  width: 5px;
+  flex-shrink: 0;
+  background: #27272a;
+  cursor: col-resize;
+  transition: background-color 0.15s;
+  position: relative;
+}
+.resize-handle:hover,
+.resize-handle:active {
+  background: #7c3aed;
 }
 
 .album-list-panel::-webkit-scrollbar { width: 4px; }

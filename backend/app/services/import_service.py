@@ -17,10 +17,13 @@ Flow:
 from __future__ import annotations
 
 import asyncio
+import logging
 import threading
 import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from beets.importer import ImportTask
@@ -52,17 +55,17 @@ def _serialize_candidates(task: "ImportTask", candidates: list) -> dict:
                 "artist": t.artist or "",
                 "track": t.index or 0,
                 "length": float(t.length or 0),
-                "mb_trackid": t.mb_trackid or "",
+                "mb_trackid": getattr(t, "mb_trackid", "") or "",
             })
         serialized_candidates.append({
             "index": i,
             "distance": float(match.distance),
-            "artist": info.albumartist or "",
-            "album": info.album or "",
-            "year": info.year or 0,
+            "artist": getattr(info, "albumartist", "") or "",
+            "album": getattr(info, "album", "") or "",
+            "year": getattr(info, "year", 0) or 0,
             "label": getattr(info, "label", "") or "",
             "country": getattr(info, "country", "") or "",
-            "mb_albumid": info.mb_albumid or "",
+            "mb_albumid": getattr(info, "mb_albumid", "") or "",
             "track_count": len(info.tracks) if info.tracks else 0,
             "tracks": tracks,
             "extra_items": len(match.extra_items) if hasattr(match, "extra_items") else 0,
@@ -136,10 +139,12 @@ class ImportBridge:
 
         # Block the import thread, waiting for the user's response.
         self._choice_event.clear()
-        signalled = self._choice_event.wait(timeout=300)
+        signalled = self._choice_event.wait(timeout=3600)
 
-        if not signalled or self._cancel_event.is_set():
-            return {"action": "skip"}
+        if not signalled:
+            return {"action": "skip", "reason": "timeout"}
+        if self._cancel_event.is_set():
+            return {"action": "skip", "reason": "cancelled"}
 
         with self._choice_lock:
             choice = self._user_choice
@@ -229,9 +234,19 @@ class ImportService:
                 beets.config["import"]["move"].set(options.get("move", False))
                 beets.config["import"]["write"].set(options.get("write_tags", True))
                 beets.config["import"]["autotag"].set(options.get("autotag", True))
-                beets.config["import"]["timid"].set(options.get("timid", False))
+                # Always timid=True so beets never auto-applies strong matches
+                # internally — all candidate decisions are routed through our
+                # choose_match() override and presented to the user in the browser.
+                beets.config["import"]["timid"].set(True)
                 # Non-interactive: we drive decisions via the bridge.
                 beets.config["import"]["quiet"].set(False)
+                # Disable plugins that make slow/blocking network calls during import.
+                # FetchArt and Lyrics are best run as a separate beet modify pass.
+                beets.config["fetchart"]["auto"].set(False)
+                try:
+                    beets.config["lyrics"]["auto"].set(False)
+                except Exception:
+                    pass
 
                 session = WebImportSession(
                     lib=lib,
@@ -247,9 +262,12 @@ class ImportService:
                     "estimated_albums": 0,  # beets doesn't know ahead of time
                 })
 
+                log.info("import session.run() starting for %s", directory)
                 session.run()
+                log.info("import session.run() completed for %s counters=%s", directory, counters)
 
             except Exception as exc:
+                log.exception("import session error: %s", exc)
                 bridge.send_progress("error", {
                     "path": directory,
                     "message": str(exc),
@@ -264,7 +282,12 @@ class ImportService:
                     "total_errors": counters["errors"],
                     "duration_s": round(elapsed, 2),
                 })
-                self.clear_session()
+                # Delay clearing the bridge so the WS handler has time to
+                # connect and relay session_complete to the browser.
+                # The WS handler also calls clear_session() on disconnect,
+                # so this is just a safety fallback for the case where no
+                # WS ever connects (calling clear_session() twice is safe).
+                threading.Timer(10.0, self.clear_session).start()
 
         thread = threading.Thread(target=_run_import, daemon=True, name=f"beets-import-{session_id}")
         thread.start()
