@@ -13,7 +13,9 @@ export async function fetchItems(params: FetchItemsParams = {}): Promise<Paginat
   return res.data
 }
 
-export async function fetchItem(id: number): Promise<ItemDetail> {
-  const res = await client.get<ItemDetail>(`/items/${id}`)
+export async function fetchItem(id: number, includeLyrics = false): Promise<ItemDetail> {
+  const res = await client.get<ItemDetail>(`/items/${id}`, {
+    params: includeLyrics ? { include_lyrics: true } : undefined,
+  })
   return res.data
 }

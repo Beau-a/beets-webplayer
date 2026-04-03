@@ -13,6 +13,7 @@ from __future__ import annotations
 import sqlite3
 import subprocess
 import threading
+import time
 import uuid
 from pathlib import Path
 from typing import Optional
@@ -42,6 +43,18 @@ _tasks: dict[str, dict] = {}
 _tasks_lock = threading.Lock()
 
 _SUPPORTED_TASKS = {"mbsync", "fetchart", "lyrics"}
+_TASK_TTL = 1800  # 30 minutes — completed/errored tasks are evicted after this
+
+
+def _evict_stale_tasks() -> None:
+    """Remove completed/errored tasks whose TTL has expired. Call under _tasks_lock."""
+    cutoff = time.monotonic() - _TASK_TTL
+    stale = [
+        tid for tid, t in _tasks.items()
+        if t["status"] != "running" and t.get("finished_at", 0) < cutoff
+    ]
+    for tid in stale:
+        del _tasks[tid]
 
 
 class LibraryTaskRequest(BaseModel):
@@ -280,6 +293,8 @@ async def run_task(body: LibraryTaskRequest) -> LibraryTaskResponse:
             if task_id in _tasks:
                 _tasks[task_id]["status"] = status
                 _tasks[task_id]["output"] = combined.strip()
+                _tasks[task_id]["finished_at"] = time.monotonic()
+            _evict_stale_tasks()
 
     thread = threading.Thread(target=_run, daemon=True, name=f"beets-task-{task_id[:8]}")
     thread.start()
@@ -291,6 +306,7 @@ async def run_task(body: LibraryTaskRequest) -> LibraryTaskResponse:
 async def get_task(task_id: str) -> dict:
     """Poll the status and output of a management task."""
     with _tasks_lock:
+        _evict_stale_tasks()
         task = _tasks.get(task_id)
 
     if task is None:

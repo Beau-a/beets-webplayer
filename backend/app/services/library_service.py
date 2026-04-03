@@ -389,12 +389,15 @@ def get_items(
     return [dict(r) for r in rows], total
 
 
-def get_item(db: sqlite3.Connection, item_id: int) -> Optional[dict]:
+def get_item(db: sqlite3.Connection, item_id: int, include_lyrics: bool = False) -> Optional[dict]:
     """
     Return a single item with full metadata.
     Deliberately excludes path and acoustid_fingerprint.
+    Pass include_lyrics=True to also fetch the lyrics column.
     """
     all_cols = _ITEM_SUMMARY_COLS + _ITEM_DETAIL_EXTRA_COLS
+    if include_lyrics:
+        all_cols = all_cols + ("lyrics",)
     col_list = ", ".join(all_cols)
 
     sql = f"SELECT {col_list} FROM items WHERE id = ?"

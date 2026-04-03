@@ -12,7 +12,7 @@ const pinia = createPinia()
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/library' },
+    { path: '/', component: () => import('./views/HomeView.vue') },
     { path: '/library', component: () => import('./views/LibraryView.vue') },
     { path: '/library/:albumId', component: () => import('./views/AlbumDetailView.vue') },
     { path: '/artist/:artistName', component: () => import('./views/ArtistView.vue') },
@@ -21,7 +21,12 @@ const router = createRouter({
     { path: '/queue', redirect: '/player' },
     { path: '/player', component: () => import('./views/QueueView.vue') },
     { path: '/tools', component: () => import('./views/SettingsView.vue') },
+    { path: '/now-playing', component: () => import('./views/NowPlayingView.vue') },
   ],
+})
+
+router.onError((error) => {
+  console.error('[Router] Navigation error:', error)
 })
 
 createApp(App)

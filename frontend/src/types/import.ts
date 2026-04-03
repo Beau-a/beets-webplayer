@@ -57,12 +57,30 @@ export type ImportSessionState =
   | 'connecting'
   | 'running'
   | 'waiting_choice'
+  | 'waiting_no_candidates'
   | 'complete'
   | 'error'
+
+export interface NoCandidatesPayload {
+  album_path: string
+  file_tracks: FileTrack[]
+}
+
+export interface MBSearchResult {
+  artist: string
+  album: string
+  year: number
+  label: string
+  country: string
+  mb_albumid: string
+  track_count: number
+  tracks: CandidateTrack[]
+}
 
 export interface ImportChoice {
   action: 'apply' | 'as_is' | 'skip' | 'singleton' | 'abort'
   candidate_index?: number
+  mb_id?: string
 }
 
 export interface ImportSessionSummary {

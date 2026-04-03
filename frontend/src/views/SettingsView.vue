@@ -89,18 +89,36 @@
       <p class="section-desc">
         Point beets at a directory to scan for new music. Matched albums will be identified
         against MusicBrainz and you'll be able to review each match before it's imported.
+        Each album waits up to 5 minutes for a response — avoid importing large batches at once
+        to keep sessions manageable.
       </p>
-      <div class="import-embed">
+      <!-- Idle: compact inline card -->
+      <div v-if="importStore.sessionState === 'idle'" class="import-embed">
         <ImportView />
+      </div>
+      <!-- Active: show a status pill so the section isn't empty -->
+      <div v-else class="import-running-pill">
+        <span class="import-running-dot" />
+        Import session active — see overlay
       </div>
     </section>
   </div>
+
+  <!-- Active import overlay — teleported so it sits above page content -->
+  <Teleport to="body">
+    <div v-if="importStore.sessionState !== 'idle'" class="import-overlay">
+      <ImportView />
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, h } from 'vue'
 import { fetchLibraryStats, runLibraryTask, getLibraryTask, type LibraryStats } from '@/api/library'
 import ImportView from './ImportView.vue'
+import { useImportStore } from '@/stores/import'
+
+const importStore = useImportStore()
 
 // ---------------------------------------------------------------------------
 // Stats
@@ -300,6 +318,47 @@ onUnmounted(() => {
   padding-top: 16px;
 }
 
+/* Status pill shown in the section while overlay is open */
+.import-running-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: #a78bfa;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 20px;
+  padding: 6px 14px;
+}
+
+.import-running-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a78bfa;
+  animation: pulse-dot 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Full-page overlay for active import sessions */
+.import-overlay {
+  position: fixed;
+  top: 44px; /* clear the topbar */
+  left: var(--sidebar-w, 200px); /* clear the sidebar */
+  right: 0;
+  bottom: 72px; /* clear the player bar */
+  z-index: 85;
+  background: #09090b;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
 .page-title {
   font-size: var(--text-2xl);
   font-weight: 700;
@@ -393,7 +452,7 @@ onUnmounted(() => {
 .fmt-name {
   font-size: var(--text-base);
   color: #a1a1aa;
-  padding: 6px 0;
+  padding: 6px 16px 6px 0;
   width: 90px;
 }
 

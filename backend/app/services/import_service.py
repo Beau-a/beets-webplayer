@@ -139,7 +139,58 @@ class ImportBridge:
 
         # Block the import thread, waiting for the user's response.
         self._choice_event.clear()
-        signalled = self._choice_event.wait(timeout=3600)
+        signalled = self._choice_event.wait(timeout=300)
+
+        if not signalled:
+            return {"action": "skip", "reason": "timeout"}
+        if self._cancel_event.is_set():
+            return {"action": "skip", "reason": "cancelled"}
+
+        with self._choice_lock:
+            choice = self._user_choice
+            self._user_choice = None
+
+        return choice or {"action": "skip"}
+
+    def send_no_candidates(self, task: "ImportTask") -> dict:
+        """
+        Called from the import THREAD when beets finds zero MusicBrainz candidates.
+        Blocks until the browser sends a choice or 300-second timeout fires.
+
+        Returns a choice dict:
+            {"action": "as_is"}
+            {"action": "skip"}
+            {"action": "apply", "mb_id": "<release-uuid>"}
+            {"action": "abort"}
+        """
+        file_tracks = []
+        for item in (task.items or []):
+            try:
+                path_name = Path(item.path).name if item.path else ""
+            except Exception:
+                path_name = ""
+            file_tracks.append({
+                "filename": path_name,
+                "title": item.title or "",
+                "artist": item.artist or "",
+                "track": item.track or 0,
+                "length": float(item.length or 0),
+            })
+
+        album_path = ""
+        if task.paths:
+            try:
+                album_path = str(task.paths[0])
+            except Exception:
+                pass
+
+        self._loop.call_soon_threadsafe(
+            self._event_queue.put_nowait,
+            {"type": "no_candidates", "payload": {"album_path": album_path, "file_tracks": file_tracks}},
+        )
+
+        self._choice_event.clear()
+        signalled = self._choice_event.wait(timeout=300)
 
         if not signalled:
             return {"action": "skip", "reason": "timeout"}

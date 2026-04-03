@@ -15,9 +15,16 @@
     />
 
     <div class="main-wrapper" :style="{ marginLeft: mainMargin }">
+      <!-- Top bar with notification bell -->
+      <div class="app-topbar">
+        <div class="topbar-right">
+          <NotificationBell />
+        </div>
+      </div>
+
       <main class="main-content">
         <RouterView v-slot="{ Component }">
-          <Transition name="fade" mode="out-in">
+          <Transition name="fade">
             <component :is="Component" :key="$route.path" />
           </Transition>
         </RouterView>
@@ -35,11 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { RouterView } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import ArtistBrowser from './ArtistBrowser.vue'
 import PlayerBar from './PlayerBar.vue'
+import NotificationBell from './NotificationBell.vue'
 import QueueDrawer from '@/components/player/QueueDrawer.vue'
 
 const sidebarCollapsed = ref(localStorage.getItem('sidebar.collapsed') === 'true')
@@ -76,6 +84,11 @@ const playerBarLeft = computed(() => {
   const extra = flyoutOpen.value ? flyoutWidth : 0
   return `${base + extra}px`
 })
+
+// Expose sidebar width to :root so teleported overlays (import, etc.) can use it
+watchEffect(() => {
+  document.documentElement.style.setProperty('--sidebar-w', `${sidebarWidth.value}px`)
+})
 </script>
 
 <style scoped>
@@ -102,10 +115,29 @@ const playerBarLeft = computed(() => {
   transition: margin-left 0.2s ease;
 }
 
+/* Top bar */
+.app-topbar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #1c1c1f;
+  background-color: #09090b;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .main-content {
   flex: 1;
   overflow-y: auto;
   padding-bottom: 72px;
+  padding-top: 0;
 }
 
 .player-bar-shell {

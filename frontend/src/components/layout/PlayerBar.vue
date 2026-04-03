@@ -3,8 +3,8 @@
     <!-- Left: Now playing info -->
     <div class="now-playing">
       <template v-if="store.currentTrack">
-        <!-- Album art thumbnail → link to album -->
-        <RouterLink :to="`/library/${store.currentTrack.album_id}`" class="art-thumb" title="Go to album">
+        <!-- Album art thumbnail → link to now playing -->
+        <RouterLink to="/now-playing" class="art-thumb" title="Now Playing">
           <img
             v-if="!artError"
             :src="`/api/albums/${store.currentTrack.album_id}/art`"

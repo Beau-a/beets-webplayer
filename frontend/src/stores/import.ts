@@ -6,6 +6,7 @@ import type {
   ImportSessionState,
   ImportCandidate,
   CandidatesPayload,
+  NoCandidatesPayload,
   ImportLogEntry,
   ImportProgress,
   ImportChoice,
@@ -21,6 +22,7 @@ export const useImportStore = defineStore('import', () => {
   const candidates = ref<ImportCandidate[]>([])
   const candidatesPayload = ref<CandidatesPayload | null>(null)
   const selectedCandidateIndex = ref<number>(0)
+  const noCandidatesPayload = ref<NoCandidatesPayload | null>(null)
   const importLog = ref<ImportLogEntry[]>([])
   const importedAlbumIds = ref<number[]>([])
   const progress = reactive<ImportProgress>({
@@ -123,6 +125,13 @@ export const useImportStore = defineStore('import', () => {
         break
       }
 
+      case 'no_candidates': {
+        const p = payload as NoCandidatesPayload
+        noCandidatesPayload.value = p
+        sessionState.value = 'waiting_no_candidates'
+        break
+      }
+
       case 'album_imported': {
         const p = payload as { album_id: number; album: string; artist: string; year: number; track_count: number }
         if (p.album_id) importedAlbumIds.value.push(p.album_id)
@@ -206,6 +215,7 @@ export const useImportStore = defineStore('import', () => {
     ws.send('choice', choice)
     candidates.value = []
     candidatesPayload.value = null
+    noCandidatesPayload.value = null
     sessionState.value = 'running'
   }
 
@@ -229,6 +239,7 @@ export const useImportStore = defineStore('import', () => {
     currentAlbumPath.value = null
     candidates.value = []
     candidatesPayload.value = null
+    noCandidatesPayload.value = null
     selectedCandidateIndex.value = 0
     importLog.value = []
     importedAlbumIds.value = []
@@ -248,6 +259,7 @@ export const useImportStore = defineStore('import', () => {
     currentAlbumPath,
     candidates,
     candidatesPayload,
+    noCandidatesPayload,
     selectedCandidateIndex,
     importLog,
     importedAlbumIds,

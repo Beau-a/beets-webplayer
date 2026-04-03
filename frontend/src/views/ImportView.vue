@@ -29,6 +29,14 @@
       </div>
     </div>
 
+    <!-- No candidates found: ask user to search MB manually -->
+    <div v-else-if="store.sessionState === 'waiting_no_candidates'" class="session-layout">
+      <ImportProgress />
+      <div class="candidate-section">
+        <NoCandidatesPanel />
+      </div>
+    </div>
+
     <!-- Complete: summary -->
     <div v-else-if="store.sessionState === 'complete'" class="result-state">
       <div class="result-card">
@@ -153,6 +161,7 @@ import { useImportStore } from '@/stores/import'
 import ImportStart from '@/components/import/ImportStart.vue'
 import ImportProgress from '@/components/import/ImportProgress.vue'
 import CandidateList from '@/components/import/CandidateList.vue'
+import NoCandidatesPanel from '@/components/import/NoCandidatesPanel.vue'
 import { runLibraryTask, getLibraryTask } from '@/api/library'
 
 const store = useImportStore()

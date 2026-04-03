@@ -14,6 +14,15 @@
 
       <!-- Nav links -->
       <nav class="sidebar-nav">
+        <!-- Home -->
+        <RouterLink to="/" class="nav-link" title="Home" :class="{ 'nav-link-active': route.path === '/' }">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span v-if="!collapsed" class="nav-label">Home</span>
+        </RouterLink>
+
         <!-- Library row + inline letter drop-under -->
         <div class="library-section">
           <div

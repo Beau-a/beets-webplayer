@@ -1,5 +1,6 @@
 import client from './client'
 import type { AlbumDetail } from '@/types/album'
+import type { MBSearchResult } from '@/types/import'
 
 export interface ImportStartOptions {
   copy?: boolean
@@ -11,6 +12,13 @@ export interface ImportStartOptions {
 export interface ImportStartResponse {
   session_id: string
   ws_url: string
+}
+
+export async function searchMusicBrainz(q: string): Promise<MBSearchResult[]> {
+  const res = await client.get<{ results: MBSearchResult[] }>('/library/import/mb-search', {
+    params: { q },
+  })
+  return res.data.results
 }
 
 export async function startImport(

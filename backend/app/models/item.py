@@ -90,3 +90,4 @@ class ItemDetail(ItemSummary):
     r128_track_gain: Optional[float] = None
     original_year: Optional[int] = None
     mtime: Optional[float] = None
+    lyrics: Optional[str] = None

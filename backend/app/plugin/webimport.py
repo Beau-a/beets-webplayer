@@ -115,15 +115,25 @@ class WebImportSession(ImportSession):
         self.bridge.send_progress("album_start", {"path": album_path})
 
         if not candidates:
-            # No MusicBrainz matches found — import with existing tags.
-            log.info("choose_match: no candidates, returning ASIS for %s", album_path)
-            return Action.ASIS
+            log.info("choose_match: no candidates, asking user for %s", album_path)
+            choice = self.bridge.send_no_candidates(task)
+        else:
+            # Block the import thread until the browser responds.
+            choice = self.bridge.send_candidates(task, candidates)
 
-        # Block the import thread until the browser responds.
-        choice = self.bridge.send_candidates(task, candidates)
         action = choice.get("action", "skip")
 
         if action == "apply":
+            # User may supply a MusicBrainz release ID directly (from the
+            # manual search panel) instead of picking from the candidate list.
+            mb_id = choice.get("mb_id")
+            if mb_id:
+                self.bridge.send_progress("mb_lookup_start", {"mb_id": mb_id})
+                match = self._fetch_mb_release(mb_id, task)
+                if match is not None:
+                    return match
+                self._send_skipped(task, "MusicBrainz ID lookup failed")
+                return Action.SKIP
             idx = choice.get("candidate_index", 0)
             if isinstance(idx, int) and 0 <= idx < len(candidates):
                 return candidates[idx]
@@ -182,7 +192,6 @@ class WebImportSession(ImportSession):
         This method IS expected to call task.set_choice() directly.
         Default policy: skip the duplicate.
         """
-        log.info("resolve_duplicate called: path=%s dupes=%d", _task_path(task), len(found_duplicates))
         task.set_choice(Action.SKIP)
         self.counters["skipped"] += 1
         try:
@@ -196,6 +205,26 @@ class WebImportSession(ImportSession):
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+
+    def _fetch_mb_release(self, mb_id: str, task: ImportTask):
+        """
+        Look up a specific MusicBrainz release by ID and return the best
+        AlbumMatch (with item→track mapping computed against task.items),
+        or None if the lookup fails or returns no usable match.
+
+        Runs on the import background thread — blocking network I/O is fine here.
+        """
+        try:
+            from beets.autotag import match as autotag_match
+            _artist, _album, proposal = autotag_match.tag_album(
+                task.items or [], search_ids=[mb_id]
+            )
+            if proposal and proposal.candidates:
+                return proposal.candidates[0]
+            log.warning("_fetch_mb_release: no match returned for mb_id=%s", mb_id)
+        except Exception as exc:
+            log.warning("_fetch_mb_release failed for mb_id=%s: %s", mb_id, exc)
+        return None
 
     def _send_skipped(self, task: ImportTask, reason: str) -> None:
         """Increment skip counter and notify the browser."""

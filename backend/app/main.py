@@ -13,6 +13,7 @@ from pathlib import Path
 
 from app.config import settings
 from app.routers import albums, items, playback, library, import_ws
+from app.routers.home import albums_router as home_albums_router, genres_router, playback_router as home_playback_router
 
 
 @asynccontextmanager
@@ -49,6 +50,22 @@ async def lifespan(app: FastAPI):
     db.row_factory = sqlite3.Row
     app.state.db = db
 
+    # Ensure play_history table exists (write via rw connection)
+    rw_db = sqlite3.connect(settings.beets_db_path, check_same_thread=False)
+    try:
+        rw_db.execute("""
+            CREATE TABLE IF NOT EXISTS play_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                item_id INTEGER NOT NULL,
+                album_id INTEGER,
+                played_at REAL NOT NULL,
+                duration_played REAL NOT NULL
+            )
+        """)
+        rw_db.commit()
+    finally:
+        rw_db.close()
+
     yield
 
     db.close()
@@ -71,7 +88,12 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Home/discovery album endpoints must be registered BEFORE the main albums router
+    # so /api/albums/recent etc. are matched before /api/albums/{album_id}
+    app.include_router(home_albums_router, prefix="/api/albums", tags=["home"])
     app.include_router(albums.router, prefix="/api/albums", tags=["albums"])
+    app.include_router(genres_router, prefix="/api/genres", tags=["home"])
+    app.include_router(home_playback_router, prefix="/api/playback", tags=["home"])
     app.include_router(items.router, prefix="/api/items", tags=["items"])
     app.include_router(playback.router, prefix="/api/stream", tags=["playback"])
     app.include_router(library.router, prefix="/api/library", tags=["library"])
@@ -93,10 +115,15 @@ def create_app() -> FastAPI:
             candidate = frontend_dist / full_path
             if candidate.exists() and candidate.is_file():
                 return FileResponse(str(candidate))
-            # Fall back to index.html for all SPA routes
+            # Fall back to index.html for all SPA routes.
+            # Must not be cached — Vite rebuilds produce new content-hashed chunk
+            # filenames, so a stale cached index.html would reference non-existent
+            # chunks and cause Vue Router lazy imports to silently fail.
             index = frontend_dist / "index.html"
             if index.exists():
-                return FileResponse(str(index))
+                response = FileResponse(str(index))
+                response.headers["Cache-Control"] = "no-cache, must-revalidate"
+                return response
             raise HTTPException(status_code=404, detail="Frontend not built")
 
     return app

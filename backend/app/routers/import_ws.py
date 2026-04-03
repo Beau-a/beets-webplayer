@@ -14,11 +14,12 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from pathlib import Path
 
 import beets.library
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 
 from app.config import settings
@@ -33,6 +34,113 @@ router = APIRouter()
 
 # Router for the REST endpoint (included with prefix=/api/library in library.py).
 library_router = APIRouter()
+
+
+_UUID_RE = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    re.IGNORECASE,
+)
+
+
+def _serialize_album_info(info) -> dict:
+    """Convert a beets AlbumInfo object to a JSON-safe dict for the MB search response."""
+    tracks = []
+    for t in (info.tracks or []):
+        tracks.append({
+            "title": getattr(t, "title", "") or "",
+            "artist": getattr(t, "artist", "") or "",
+            "track": getattr(t, "index", 0) or 0,
+            "length": float(getattr(t, "length", 0) or 0),
+            "mb_trackid": getattr(t, "track_id", "") or "",
+        })
+    return {
+        "artist": getattr(info, "albumartist", "") or "",
+        "album": getattr(info, "album", "") or "",
+        "year": getattr(info, "year", 0) or 0,
+        "label": getattr(info, "label", "") or "",
+        "country": getattr(info, "country", "") or "",
+        "mb_albumid": getattr(info, "album_id", "") or "",
+        "track_count": len(info.tracks) if info.tracks else 0,
+        "tracks": tracks,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/library/import/mb-search
+# ---------------------------------------------------------------------------
+
+@library_router.get("/import/mb-search")
+async def mb_search(q: str = Query(..., min_length=1)):
+    """
+    Search MusicBrainz for album releases matching a query string.
+
+    If q contains a UUID (raw or embedded in a MB release URL), performs a
+    direct ID lookup via metadata_plugins.albums_for_ids().
+
+    Otherwise, attempts a text search: split on ' - ' to extract artist and
+    album name, then call metadata_plugins.candidates() (up to 5 results).
+
+    Both calls are blocking network I/O; dispatched via run_in_executor to
+    avoid blocking the asyncio event loop.
+
+    Returns: {"results": [{artist, album, year, label, country, mb_albumid, track_count, tracks}]}
+    """
+    loop = asyncio.get_event_loop()
+
+    uuid_match = _UUID_RE.search(q)
+
+    if uuid_match:
+        # Direct ID or URL lookup — pass the raw query; the MB plugin's
+        # _extract_id will parse out the UUID from URLs automatically.
+        raw_q = q.strip()
+        def _lookup_by_id():
+            from beets import metadata_plugins
+            return [i for i in metadata_plugins.albums_for_ids([raw_q]) if i is not None]
+
+        raw_results = await loop.run_in_executor(None, _lookup_by_id)
+    else:
+        # Text search — split on ' - ' for artist / album.
+        parts = q.split(" - ", 1)
+        if len(parts) == 2:
+            artist = parts[0].strip()
+            album = parts[1].strip()
+        else:
+            artist = ""
+            album = q.strip()
+
+        def _search_by_text():
+            # Bypass metadata_plugins.candidates() entirely to avoid the
+            # extra_tags / plurality issue (extra_tags like 'tracks' need
+            # real Item objects to compute values; we have none here).
+            # Instead, call each metadata source plugin's search API
+            # directly with only the criteria we actually know: release
+            # name and artist. Distance scoring happens later in the import
+            # thread when _fetch_mb_release calls tag_album() with real items.
+            from beets.metadata_plugins import find_metadata_source_plugins, SearchParams
+            results = []
+            criteria = {"release": album}
+            if artist:
+                criteria["artist"] = artist
+            for plugin in find_metadata_source_plugins():
+                if not hasattr(plugin, "get_search_response"):
+                    continue
+                try:
+                    params = SearchParams("album", "", criteria, 5)
+                    ids = plugin.get_search_response(params)
+                    infos = list(filter(None, plugin.albums_for_ids(
+                        r["id"] for r in ids
+                    )))
+                    results.extend(infos)
+                    if results:
+                        break  # stop after first plugin returns results
+                except Exception as exc:
+                    log.debug("mb_search text search failed for plugin %s: %s", plugin, exc)
+            return results[:5]
+
+        raw_results = await loop.run_in_executor(None, _search_by_text)
+
+    results = [_serialize_album_info(info) for info in raw_results if info is not None]
+    return {"results": results}
 
 
 # ---------------------------------------------------------------------------

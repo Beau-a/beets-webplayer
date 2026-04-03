@@ -40,9 +40,10 @@ async def list_items(
 @router.get("/{item_id}", response_model=ItemDetail)
 async def get_item(
     item_id: int,
+    include_lyrics: bool = Query(default=False, description="Include lyrics field in response"),
     db: sqlite3.Connection = Depends(get_db),
 ) -> ItemDetail:
-    row = library_service.get_item(db, item_id)
+    row = library_service.get_item(db, item_id, include_lyrics=include_lyrics)
     if row is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return ItemDetail(**row)

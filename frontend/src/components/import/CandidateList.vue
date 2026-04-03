@@ -76,16 +76,109 @@
       </button>
       <button class="action-btn btn-ghost" @click="doSkip">Skip</button>
     </div>
+
+    <!-- Manual MB search — shown when none of the candidates match -->
+    <div class="mb-search-section">
+      <button class="mb-search-toggle" @click="showMBSearch = !showMBSearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="toggle-icon">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        {{ showMBSearch ? 'Hide search' : 'Search for the correct release on MusicBrainz' }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chevron-icon" :class="{ open: showMBSearch }">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      <div v-if="showMBSearch" class="mb-search-panel">
+        <div class="mb-search-input-row">
+          <input
+            v-model="mbQuery"
+            class="mb-search-input"
+            placeholder="Paste MB URL or search Artist - Album"
+            @keydown.enter="doMBSearch"
+          />
+          <button
+            class="search-btn"
+            :disabled="mbSearching || !mbQuery.trim()"
+            @click="doMBSearch"
+          >
+            <span v-if="mbSearching" class="btn-spinner" />
+            <span v-else>Search</span>
+          </button>
+        </div>
+        <div v-if="mbSearchError" class="mb-search-error">{{ mbSearchError }}</div>
+        <div v-if="mbResults.length > 0" class="mb-results">
+          <div
+            v-for="result in mbResults"
+            :key="result.mb_albumid"
+            class="mb-result-card"
+            :class="{ 'is-selected': selectedMBResult?.mb_albumid === result.mb_albumid }"
+            @click="selectedMBResult = result"
+          >
+            <div class="mb-result-main">
+              <span class="mb-result-album">{{ result.album }}</span>
+              <span class="mb-result-artist">{{ result.artist }}</span>
+            </div>
+            <div class="mb-result-meta">
+              <span v-if="result.year">{{ result.year }}</span>
+              <span v-if="result.country"> · {{ result.country }}</span>
+              <span v-if="result.label"> · {{ result.label }}</span>
+              <span> · {{ result.track_count }} tracks</span>
+            </div>
+          </div>
+          <button
+            class="action-btn btn-primary apply-mb-btn"
+            :disabled="!selectedMBResult"
+            @click="doApplyMB"
+          >
+            Apply This Release
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useImportStore } from '@/stores/import'
+import { searchMusicBrainz } from '@/api/library'
+import type { MBSearchResult } from '@/types/import'
 import CandidateCard from './CandidateCard.vue'
 import TrackComparison from './TrackComparison.vue'
 
 const store = useImportStore()
+
+const showMBSearch = ref(false)
+const mbQuery = ref('')
+const mbSearching = ref(false)
+const mbSearchError = ref('')
+const mbResults = ref<MBSearchResult[]>([])
+const selectedMBResult = ref<MBSearchResult | null>(null)
+
+async function doMBSearch() {
+  if (!mbQuery.value.trim()) return
+  mbSearching.value = true
+  mbSearchError.value = ''
+  mbResults.value = []
+  selectedMBResult.value = null
+  try {
+    mbResults.value = await searchMusicBrainz(mbQuery.value.trim())
+    if (mbResults.value.length === 0) {
+      mbSearchError.value = 'No results found. Try a different search or URL.'
+    }
+  } catch {
+    mbSearchError.value = 'Search failed. Check the server connection.'
+  } finally {
+    mbSearching.value = false
+  }
+}
+
+function doApplyMB() {
+  if (!selectedMBResult.value) return
+  store.submitChoice({ action: 'apply', mb_id: selectedMBResult.value.mb_albumid })
+}
 
 const selectedCandidate = computed(() =>
   store.candidates.find((c) => c.index === store.selectedCandidateIndex) ?? null,
@@ -325,5 +418,177 @@ function doSingleton() {
 .btn-ghost:hover {
   background-color: #27272a;
   color: #a1a1aa;
+}
+
+/* MB search section */
+.mb-search-section {
+  border-top: 1px solid #1a1a1e;
+}
+
+.mb-search-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: #71717a;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.mb-search-toggle:hover {
+  color: #a1a1aa;
+  background-color: rgba(255,255,255,0.03);
+}
+
+.toggle-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.chevron-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.chevron-icon.open {
+  transform: rotate(180deg);
+}
+
+.mb-search-panel {
+  padding: 0 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mb-search-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.mb-search-input {
+  flex: 1;
+  background-color: #09090b;
+  border: 1px solid #3f3f46;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: var(--text-sm);
+  color: #f4f4f5;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.mb-search-input:focus {
+  border-color: #7c3aed;
+}
+
+.mb-search-input::placeholder {
+  color: #52525b;
+}
+
+.search-btn {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  background-color: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 7px;
+  color: #d4d4d8;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.15s;
+}
+
+.search-btn:hover:not(:disabled) {
+  background-color: #3f3f46;
+}
+
+.search-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #52525b;
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.mb-search-error {
+  font-size: var(--text-sm);
+  color: #f87171;
+}
+
+.mb-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mb-result-card {
+  padding: 9px 12px;
+  background-color: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.mb-result-card:hover {
+  border-color: #3f3f46;
+  background-color: #111113;
+}
+
+.mb-result-card.is-selected {
+  border-color: #7c3aed;
+  background-color: rgba(124, 58, 237, 0.08);
+}
+
+.mb-result-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.mb-result-album {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #f4f4f5;
+}
+
+.mb-result-artist {
+  font-size: var(--text-xs);
+  color: #a1a1aa;
+}
+
+.mb-result-meta {
+  font-size: var(--text-xs);
+  color: #52525b;
+}
+
+.apply-mb-btn {
+  align-self: flex-start;
+  margin-top: 4px;
 }
 </style>
